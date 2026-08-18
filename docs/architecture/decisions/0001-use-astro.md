@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-*For Your Consideration* is a content-focused blog whose primary experience is
+_For Your Consideration_ is a content-focused blog whose primary experience is
 reading public articles. It should produce semantic HTML, load quickly, and avoid
 shipping browser JavaScript when a page does not need it. The project also needs
 TypeScript support and room for isolated interactivity later.
