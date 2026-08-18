@@ -34,3 +34,10 @@ The development server is available at `http://localhost:4321`.
 | `npm run build`        | Create the production build in `dist/`.         |
 | `npm run preview`      | Serve the production build locally.             |
 | `npm run validate`     | Run every check required before a pull request. |
+
+## Deployments
+
+Vercel builds pull-request previews and production deployments from the GitHub
+repository. Preview deployments require a Vercel team login; production deploys
+from `main` and remains public. See the [deployment guide](docs/deployment.md)
+for verification and rollback steps.
