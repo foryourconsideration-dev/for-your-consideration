@@ -2,7 +2,7 @@
 
 ## Article
 
-A piece of writing published on *For Your Consideration*.
+A piece of writing published on _For Your Consideration_.
 
 ## Draft article
 

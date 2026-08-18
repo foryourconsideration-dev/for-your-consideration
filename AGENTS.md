@@ -47,10 +47,8 @@ opportunistic refactors into the change.
 
 ## Validation
 
-For application changes, run:
-
-1. `npm run check`
-2. `npm run build`
+For application changes, run `npm run validate`. This checks formatting, Astro
+and TypeScript, and the production build.
 
 Documentation-only changes require:
 
