@@ -1,0 +1,35 @@
+---
+import "@fontsource-variable/libre-franklin/wght.css";
+import "@fontsource-variable/newsreader/wght.css";
+import "@fontsource-variable/newsreader/wght-italic.css";
+import "../styles/global.css";
+
+import { site } from "../config/site";
+
+interface Props {
+  pageTitle?: string;
+}
+
+const { pageTitle } = Astro.props;
+
+let documentTitle: string = site.title;
+
+if (pageTitle) {
+  documentTitle = `${pageTitle} | ${site.title}`;
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{documentTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-masthead" href="/">{site.title}</a>
+    </header>
+    <slot />
+  </body>
+</html>
