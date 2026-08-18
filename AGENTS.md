@@ -22,8 +22,7 @@ not prior chat context, are the source of truth.
 - Keep administrative writes server-controlled. Never expose privileged keys to
   browser code or public build output.
 - Do not add reader accounts, comments, newsletters, analytics, archives,
-  categories, or search unless an approved roadmap change explicitly requests
-  them.
+  categories, or search unless an approved project decision requests them.
 - Prefer the smallest solution that meets a current product, security,
   reliability, accessibility, or portfolio need.
 - Do not introduce a dependency without explaining its concrete purpose in the
@@ -39,7 +38,7 @@ opportunistic refactors into the change.
 
 ## File placement and naming
 
-- Place application source in `src/` once it exists.
+- Place application source in `src/`.
 - Use lowercase kebab-case for new documentation filenames.
 - Keep private authoring files out of the repository. Their ignored location will
   be established with the authoring workflow.
@@ -48,15 +47,19 @@ opportunistic refactors into the change.
 
 ## Validation
 
-Until automated checks are introduced, documentation-only changes require:
+For application changes, run:
+
+1. `npm run check`
+2. `npm run build`
+
+Documentation-only changes require:
 
 1. Review rendered Markdown.
 2. Verify every relative link and heading target.
 3. Inspect the diff for private content, secrets, absolute personal paths,
    generated debris, unrelated changes, and stale instructions.
 
-Update this section when executable quality gates are introduced; never invent or
-report commands that the repository does not provide.
+Never invent or report commands that the repository does not provide.
 
 Visible changes require stable desktop and narrow-mobile screenshots. Attach
 transient review screenshots to the PR; do not commit them unless they are
