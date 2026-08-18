@@ -1,0 +1,1 @@
+-- Intentionally empty until the article data model is defined.
