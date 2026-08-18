@@ -1,0 +1,104 @@
+:root {
+  --color-canvas: #fefefd;
+  --color-ink: #1c1b1a;
+  --color-muted: #55524e;
+  --color-rule: #c9c5bc;
+  --font-interface: "Libre Franklin Variable", Arial, sans-serif;
+  --font-editorial: "Newsreader Variable", Georgia, serif;
+  --measure-reading: 65ch;
+  --measure-page: 90rem;
+  --space-page: clamp(1rem, 4vw, 4rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-editorial);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100vh;
+  margin: 0;
+  font-size: clamp(1.125rem, 1.1rem + 0.125vw, 1.1875rem);
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.075em;
+  text-underline-offset: 0.16em;
+}
+
+a:hover {
+  text-decoration-thickness: 0.12em;
+}
+
+:focus-visible {
+  outline: 0.18rem solid currentColor;
+  outline-offset: 0.22rem;
+}
+
+.site-header {
+  width: min(100% - (2 * var(--space-page)), var(--measure-page));
+  margin-inline: auto;
+  padding-block: clamp(1.5rem, 3.5vw, 3rem);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.site-masthead {
+  display: block;
+  width: fit-content;
+  margin-inline-start: clamp(1rem, 2.5vw, 2.5rem);
+  font-family: var(--font-interface);
+  font-size: clamp(1rem, 4.7vw, 4.25rem);
+  font-weight: 750;
+  line-height: 0.95;
+  letter-spacing: 0.09em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transform: scaleY(1.15);
+}
+
+.site-masthead:focus-visible {
+  outline: none;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.18em;
+}
+
+.page-container {
+  width: min(100% - (2 * var(--space-page)), var(--measure-page));
+  margin-inline: auto;
+}
+
+.reading-container {
+  width: min(100%, var(--measure-reading));
+  margin-inline: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

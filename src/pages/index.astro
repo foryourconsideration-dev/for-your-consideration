@@ -1,17 +1,10 @@
 ---
 import { site } from "../config/site";
+import SiteLayout from "../layouts/SiteLayout.astro";
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{site.title}</title>
-  </head>
-  <body>
-    <main>
-      <h1>{site.title}</h1>
-    </main>
-  </body>
-</html>
+<SiteLayout>
+  <main class="page-container">
+    <h1 class="visually-hidden">{site.title}</h1>
+  </main>
+</SiteLayout>
