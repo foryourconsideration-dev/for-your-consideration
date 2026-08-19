@@ -48,8 +48,7 @@ opportunistic refactors into the change.
 ## Validation
 
 For application changes, run `npm test` and `npm run validate`. These check
-application behavior, formatting, linting, Astro and TypeScript, and the
-production build.
+application behavior, formatting, linting, Astro, and TypeScript.
 
 For database configuration, migration, policy, or seed changes, also start the
 local stack and run `npm run db:reset`, `npm run db:test`, and
@@ -58,6 +57,9 @@ recreate the database exclusively from committed configuration, migrations, and
 seed data. Generated database types must be committed without a remaining diff.
 Never run reset commands against a linked or hosted project without explicit
 authorization.
+
+For pages that retrieve Supabase data at build time, also run
+`npm run build:local` and `npm run test:build` against a reset local database.
 
 Documentation-only changes require:
 

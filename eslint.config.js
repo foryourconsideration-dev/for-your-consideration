@@ -9,7 +9,13 @@ const recommendedTypeScriptRules = Object.assign(
 );
 
 export default defineConfig([
-  globalIgnores([".astro/", "dist/", "src/types/database.ts"]),
+  globalIgnores([
+    ".astro/",
+    "dist/",
+    "src/types/database.ts",
+    "supabase/.branches/",
+    "supabase/.temp/",
+  ]),
   {
     name: "project/javascript-and-typescript",
     files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
