@@ -51,10 +51,11 @@ For application changes, run `npm run validate`. This checks formatting, Astro
 and TypeScript, and the production build.
 
 For database configuration, migration, policy, or seed changes, also start the
-local stack and run `npm run db:reset`. A successful reset must recreate the
-database exclusively from committed configuration, migrations, and seed data.
-Never run reset commands against a linked or hosted project without explicit
-authorization.
+local stack and run `npm run db:reset`, `npm run db:test`, and
+`npm run db:types`. A successful reset must recreate the database exclusively
+from committed configuration, migrations, and seed data. Generated database
+types must be committed without a remaining diff. Never run reset commands
+against a linked or hosted project without explicit authorization.
 
 Documentation-only changes require:
 

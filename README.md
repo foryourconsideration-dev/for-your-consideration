@@ -35,6 +35,8 @@ The development server is available at `http://localhost:4321`.
 | `npm run db:stop`      | Stop the local Supabase stack.                  |
 | `npm run db:status`    | Show local Supabase services and status.        |
 | `npm run db:reset`     | Rebuild the local database from repository SQL. |
+| `npm run db:test`      | Test database behavior and access policies.     |
+| `npm run db:types`     | Regenerate TypeScript types from the schema.    |
 | `npm run format`       | Format supported files with Prettier.           |
 | `npm run format:check` | Check formatting without changing files.        |
 | `npm run build`        | Create the production build in `dist/`.         |

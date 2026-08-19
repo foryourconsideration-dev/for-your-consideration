@@ -15,6 +15,8 @@
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types --local --lang typescript > src/types/database.ts && prettier src/types/database.ts --write",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "validate": "npm run format:check && npm run check && npm run build"
