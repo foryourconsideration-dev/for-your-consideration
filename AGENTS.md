@@ -48,8 +48,8 @@ opportunistic refactors into the change.
 ## Validation
 
 For application changes, run `npm test` and `npm run validate`. These check
-application behavior, formatting, Astro and TypeScript, and the production
-build.
+application behavior, formatting, linting, Astro and TypeScript, and the
+production build.
 
 For database configuration, migration, policy, or seed changes, also start the
 local stack and run `npm run db:reset`, `npm run db:test`, and

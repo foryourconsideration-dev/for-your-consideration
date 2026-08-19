@@ -40,6 +40,8 @@ The development server is available at `http://localhost:4321`.
 | `npm test`             | Run application behavior tests.                 |
 | `npm run format`       | Format supported files with Prettier.           |
 | `npm run format:check` | Check formatting without changing files.        |
+| `npm run lint`         | Check source files with ESLint.                 |
+| `npm run lint:fix`     | Apply safe ESLint fixes.                        |
 | `npm run build`        | Create the production build in `dist/`.         |
 | `npm run preview`      | Serve the production build locally.             |
 | `npm run validate`     | Run every check required before a pull request. |

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24.16 <25"
   },
   "scripts": {
     "dev": "astro dev",
@@ -21,7 +21,9 @@
     "test:integration": "node --test test/integration/*.test.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "validate": "npm run format:check && npm run check && npm run build"
+    "lint": "eslint \"**/*.{js,mjs,cjs,ts,mts,cts,astro}\" --max-warnings 0",
+    "lint:fix": "eslint \"**/*.{js,mjs,cjs,ts,mts,cts,astro}\" --fix",
+    "validate": "npm run format:check && npm run lint && npm run check && npm run build"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.3",
@@ -33,10 +35,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@eslint/js": "10.0.1",
     "@types/node": "24.13.3",
+    "eslint": "10.8.1",
+    "eslint-plugin-astro": "3.1.0",
     "prettier": "3.9.6",
     "prettier-plugin-astro": "0.14.1",
     "supabase": "2.115.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "8.67.0"
   }
 }
