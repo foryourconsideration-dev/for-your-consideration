@@ -21,7 +21,8 @@ when a specific external reviewer needs temporary access.
 
 1. Run `npm run validate` locally.
 2. Push the pull-request branch to GitHub.
-3. Wait for the GitHub quality check and Vercel preview deployment to succeed.
+3. Wait for the required `Format`, `Lint`, `Test`, `Validate`, and `Database`
+   checks and the Vercel preview deployment to succeed.
 4. Open the preview URL while logged in to Vercel and perform the applicable
    desktop, mobile, keyboard, and content checks.
 5. Merge the approved pull request into `main`.

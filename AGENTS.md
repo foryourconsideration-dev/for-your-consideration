@@ -97,5 +97,7 @@ the implementation it describes instead of documenting speculative decisions.
 - Finish each PR as one clean commit. Temporary local commits must be squashed
   before review.
 - Complete `.github/pull_request_template.md` with exact evidence.
+- Wait for the required `Format`, `Lint`, `Test`, `Validate`, and `Database`
+  checks to pass before merging into `main`.
 - Do not push, merge, deploy, or mutate production without explicit authorization.
 - Never silently stage or overwrite unrelated work.
