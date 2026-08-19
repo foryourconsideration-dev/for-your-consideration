@@ -112,7 +112,8 @@ const hasSubtitle = Astro.slots.has("subtitle");
     line-height: 1.45;
   }
 
-  .article-body :global(.footnote-reference) {
+  .article-body :global(.footnote-reference),
+  .article-body :global([data-footnote-ref]) {
     margin-inline-start: 0.08em;
     font-size: 0.7em;
     font-weight: 600;
@@ -137,7 +138,8 @@ const hasSubtitle = Astro.slots.has("subtitle");
     padding-inline-start: 1.25em;
   }
 
-  .article-body :global(.footnote-backlink) {
+  .article-body :global(.footnote-backlink),
+  .article-body :global([data-footnote-backref]) {
     margin-inline-start: 0.2em;
   }
 </style>
