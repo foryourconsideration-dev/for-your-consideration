@@ -1,0 +1,32 @@
+---
+import { site } from "../config/site";
+import SiteLayout from "../layouts/SiteLayout.astro";
+---
+
+<SiteLayout pageTitle={site.copy.pages.notFound.title}>
+  <main class="page-container not-found-page">
+    <div class="reading-container">
+      <h1>{site.copy.pages.notFound.title}</h1>
+      <p>{site.copy.pages.notFound.description}</p>
+      <a href="/">{site.copy.pages.notFound.homeLink}</a>
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .not-found-page {
+    padding-block: clamp(3rem, 8vw, 8rem);
+  }
+
+  h1 {
+    margin-block: 0 1rem;
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 500;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    margin-block: 0 1.5rem;
+  }
+</style>

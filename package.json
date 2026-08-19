@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:local": "node scripts/build-with-local-supabase.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "db:start": "supabase start",
@@ -18,12 +19,13 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types --local --lang typescript > src/types/database.ts && prettier src/types/database.ts --write",
     "test": "node --test test/*.test.ts",
+    "test:build": "node --test test/build/*.test.ts",
     "test:integration": "node --test test/integration/*.test.ts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint \"**/*.{js,mjs,cjs,ts,mts,cts,astro}\" --max-warnings 0",
     "lint:fix": "eslint \"**/*.{js,mjs,cjs,ts,mts,cts,astro}\" --fix",
-    "validate": "npm run format:check && npm run lint && npm run check && npm run build"
+    "validate": "npm run format:check && npm run lint && npm run check"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.3",

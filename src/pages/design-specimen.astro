@@ -1,63 +1,37 @@
 ---
+import ArticleBody from "../components/ArticleBody.astro";
 import ArticleLayout from "../layouts/ArticleLayout.astro";
 import SiteLayout from "../layouts/SiteLayout.astro";
+
+const specimenMarkdown = `
+Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph.[^1]
+
+## Section heading
+
+Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph.
+
+Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body paragraph.
+
+> Quotation
+
+### Subheading
+
+- List item
+- List item
+- List item
+
+Body text with a [text link](https://example.com).
+
+[^1]: Footnote text.
+`;
 ---
 
 <SiteLayout pageTitle="Design specimen">
-  <ArticleLayout>
-    <Fragment slot="title">Article title</Fragment>
-    <time slot="metadata" datetime="2026-08-18">Publication date</time>
-    <Fragment slot="subtitle">Article subtitle</Fragment>
-
-    <p>
-      Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body
-      paragraph. Body paragraph. Body paragraph.<sup id="reference-1"
-        ><a
-          class="footnote-reference"
-          href="#footnote-1"
-          aria-label="Go to footnote 1">1</a
-        ></sup
-      >
-    </p>
-
-    <h2>Section heading</h2>
-    <p>
-      Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body
-      paragraph. Body paragraph. Body paragraph. Body paragraph.
-    </p>
-
-    <p>
-      Body paragraph. Body paragraph. Body paragraph. Body paragraph. Body
-      paragraph. Body paragraph.
-    </p>
-
-    <blockquote>
-      <p>“Quotation”</p>
-    </blockquote>
-
-    <h3>Subheading</h3>
-    <ul>
-      <li>List item</li>
-      <li>List item</li>
-      <li>List item</li>
-    </ul>
-
-    <p>Body text with a <a href="#caption">text link</a>.</p>
-
-    <p id="caption" class="caption">Figure 1. Caption</p>
-
-    <section class="footnotes" aria-labelledby="notes-heading">
-      <h2 id="notes-heading">Notes</h2>
-      <ol>
-        <li id="footnote-1">
-          Footnote
-          <a
-            class="footnote-backlink"
-            href="#reference-1"
-            aria-label="Return to footnote reference 1">↩</a
-          >
-        </li>
-      </ol>
-    </section>
+  <ArticleLayout
+    title="Article title"
+    subtitle="Article subtitle"
+    publishedAt="2026-08-18T12:00:00Z"
+  >
+    <ArticleBody slot="body" body={specimenMarkdown} />
   </ArticleLayout>
 </SiteLayout>

@@ -67,9 +67,6 @@ jobs:
       - name: Check Astro and TypeScript
         run: npm run check
 
-      - name: Build
-        run: npm run build
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -116,6 +113,12 @@ jobs:
 
       - name: Test application database access
         run: npm run test:integration
+
+      - name: Build static pages from local published data
+        run: npm run build:local
+
+      - name: Test generated pages
+        run: npm run test:build
 
       - name: Verify generated database types
         run: |

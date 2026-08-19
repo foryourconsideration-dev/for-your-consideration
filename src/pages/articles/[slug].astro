@@ -1,0 +1,41 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import ArticleBody from "../../components/ArticleBody.astro";
+import {
+  getPublishedArticleBySlug,
+  listPublishedArticles,
+} from "../../data/articles";
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+
+export const getStaticPaths = (async () => {
+  const articles = await listPublishedArticles();
+
+  return articles.map(({ slug }) => ({ params: { slug } }));
+}) satisfies GetStaticPaths;
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  throw new Error("Cannot build an article page without a slug.");
+}
+
+const article = await getPublishedArticleBySlug(slug);
+
+if (!article) {
+  throw new Error(
+    `Published article "${slug}" became unavailable during the build.`,
+  );
+}
+---
+
+<SiteLayout pageTitle={article.title}>
+  <ArticleLayout
+    title={article.title}
+    subtitle={article.subtitle}
+    publishedAt={article.publishedAt}
+  >
+    <ArticleBody slot="body" body={article.bodyMarkdown} />
+  </ArticleLayout>
+</SiteLayout>
