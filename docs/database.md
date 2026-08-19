@@ -74,6 +74,26 @@ comments, categories, or images before those features have approved behavior.
 The anonymous Data API role has `select` permission only, filtered by Row Level
 Security. It cannot retrieve drafts or archived rows and has no write grants.
 
+## Application access
+
+Reader-facing code accesses articles through `src/data/articles.ts`, rather than
+constructing Supabase queries inside pages. It provides a newest-first published
+article list and a published-article lookup by slug. An empty publication returns
+an empty list, an unknown slug returns `null`, and database failures throw an
+`ArticleDataError` so callers do not confuse an outage with missing content.
+
+The server-only client in `src/lib/supabase/server.ts` requires
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Copy `.env.example` to `.env` and
+fill in values for the Supabase environment being used. Local values are shown
+by `npm run db:status`; never commit the resulting `.env` file. These variables
+intentionally omit Astro's `PUBLIC_` prefix so application code cannot expose
+them to browser bundles by default.
+
+Astro retrieves article data while producing a static build
+([ADR 0004](architecture/decisions/0004-retrieve-articles-at-build-time.md)).
+Publishing will therefore need to trigger a Vercel deployment before new content
+appears on the site.
+
 ## Repository ownership
 
 - `supabase/config.toml` defines reproducible local service settings.
