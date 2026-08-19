@@ -4,7 +4,9 @@ Supabase provides the local PostgreSQL environment and the secured article data
 model ([ADR 0002](architecture/decisions/0002-use-supabase-for-application-data.md)).
 Article bodies are stored as Markdown
 ([ADR 0003](architecture/decisions/0003-store-article-bodies-as-markdown.md)).
-This repository is not yet linked to a hosted Supabase project.
+Preview and Production use separate hosted Supabase projects. Both run in the
+same region and receive schema changes from this repository's migrations; local
+development remains isolated in the local stack.
 
 ## Prerequisites
 
@@ -108,15 +110,33 @@ private drafts, or hosted project identifiers that reveal credentials.
 
 ## Environment boundaries
 
-| Environment       | Database                                        |
-| ----------------- | ----------------------------------------------- |
-| Local development | Local Supabase stack managed by this repository |
-| Vercel preview    | Not connected yet                               |
-| Production        | Not connected yet                               |
+| Environment       | Database                                         |
+| ----------------- | ------------------------------------------------ |
+| Local development | Local Supabase stack managed by this repository  |
+| Vercel preview    | `For Your Consideration - Preview` in West US    |
+| Production        | `For Your Consideration - Production` in West US |
 
-The hosted preview and production strategy will be selected when deployed data
-access is implemented. This avoids creating remote projects or choosing a paid
-branching model before the application needs either one.
+The hosted projects are deliberately separate. Preview cannot read or mutate
+Production data, and neither hosted database contains repository seed fixtures.
+Preview fixtures will be introduced only with explicit ownership and cleanup
+safeguards.
+
+## Hosted migration workflow
+
+Treat linking and pushing as deliberate environment-specific operations. Never
+assume the currently linked project is safe to change.
+
+1. Confirm the intended project name and reference in the Supabase Dashboard or
+   with `npx supabase projects list`.
+2. Link explicitly with `npx supabase link --project-ref <project-reference>`.
+3. Inspect pending changes with `npx supabase db push --dry-run`.
+4. Apply the reviewed migrations with `npx supabase db push`.
+5. Verify anonymous reads and write denial against the hosted Data API.
+
+Apply and verify Preview before Production. Obtain explicit authorization before
+changing Production. Do not use `npm run db:reset`, `--include-seed`, or the SQL
+seed file against either hosted project. Hosted rollbacks use a reviewed
+corrective migration; do not rewrite or delete an applied migration.
 
 ## References
 
