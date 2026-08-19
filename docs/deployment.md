@@ -34,10 +34,26 @@ a concrete requirement they do not support.
 
 ## Environment variables and secrets
 
-No environment variables are currently required. Add future values in Vercel's
-project settings and scope them deliberately to Preview or Production. Never
-commit credentials or copy production-only secrets into Preview without a
-documented requirement.
+Static builds require two server-only values:
+
+| Variable                   | Preview scope            | Production scope            |
+| -------------------------- | ------------------------ | --------------------------- |
+| `SUPABASE_URL`             | Preview Supabase project | Production Supabase project |
+| `SUPABASE_PUBLISHABLE_KEY` | Preview publishable key  | Production publishable key  |
+
+The variables are configured independently in Vercel and are hidden from build
+output. They intentionally omit Astro's `PUBLIC_` prefix and must not be copied
+between environments. A publishable key is constrained by database grants and
+Row Level Security; it is not an administrative credential.
+
+Do not add database passwords, secret keys, service-role keys, private drafts,
+or Supabase access tokens to Vercel. Local development continues to use an
+ignored `.env` file and the local Supabase values reported by
+`npm run db:status`.
+
+Environment changes apply to new deployments. Trigger or redeploy the intended
+environment after changing a value, then verify the build and reader-facing
+data before promoting the change.
 
 ## Rollback
 
