@@ -34,7 +34,8 @@ License 1.1. Fallback stacks remain defined in case a font cannot load.
 
 `ArticleLayout.astro` owns the semantic article frame and editorial styles. Test
 fixtures and future article routes should use that component rather than copying
-article-specific CSS.
+article-specific CSS. The supported article markup and authoring rules are
+documented in the [content style guide](content-style.md).
 
 ## Reading layout
 

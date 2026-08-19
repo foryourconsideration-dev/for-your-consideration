@@ -1,0 +1,12 @@
+---
+import { renderArticleBodyMarkdown } from "../lib/markdown/render-article-body-markdown";
+
+interface Props {
+  body: string;
+}
+
+const { body } = Astro.props;
+const html = await renderArticleBodyMarkdown(body);
+---
+
+<Fragment set:html={html} />
