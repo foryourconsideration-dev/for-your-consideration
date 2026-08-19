@@ -34,3 +34,37 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  database:
+    name: Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start local database services
+        run: npm run db:start
+
+      - name: Recreate database from migrations and seed data
+        run: npm run db:reset
+
+      - name: Test database behavior and policies
+        run: npm run db:test
+
+      - name: Verify generated database types
+        run: |
+          npm run db:types
+          git diff --exit-code -- src/types/database.ts
+
+      - name: Stop local database services
+        if: always()
+        run: npm run db:stop
