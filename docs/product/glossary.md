@@ -27,6 +27,11 @@ content.
 Structured fields at the beginning of a local Markdown file, separated from the
 article body by `---` delimiters.
 
+## Sitemap
+
+A machine-readable file listing a website's public pages so search engines can
+discover and crawl their canonical URLs.
+
 ## Slug
 
 The unique lowercase identifier used in an article's URL.

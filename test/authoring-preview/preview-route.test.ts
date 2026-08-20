@@ -31,4 +31,11 @@ describe("built local authoring preview", () => {
     assert.doesNotMatch(preview, /rel="canonical"/);
     assert.doesNotMatch(preview, /property="og:url"/);
   });
+
+  it("does not include a private authoring preview in the sitemap", () => {
+    const sitemap = readFileSync("dist/sitemap-0.xml", "utf8");
+
+    assert.doesNotMatch(sitemap, /\/preview\//);
+    assert.doesNotMatch(sitemap, /fixture-article/);
+  });
 });
