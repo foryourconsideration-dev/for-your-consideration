@@ -63,6 +63,7 @@ const processor = createMarkdownProcessor({
     [rehypeSanitize, articleSanitizationSchema],
   ],
   remarkRehype: {
+    footnoteBackContent: site.copy.article.footnoteBacklink,
     footnoteLabel: site.copy.article.notesHeading,
     footnoteLabelProperties: {},
   },

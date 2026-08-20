@@ -3,6 +3,7 @@ export const site = {
     "For Your Consideration is a blog featuring opinions, commentary, and reflections on a wide range of topics.",
   copy: {
     article: {
+      footnoteBacklink: "↩︎",
       notesHeading: "Notes",
     },
     pages: {
