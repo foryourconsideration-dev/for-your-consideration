@@ -41,10 +41,10 @@ The body must contain non-whitespace Markdown and follow the
 byline are not part of the local file contract.
 
 `publishedAt` is the intended publication timestamp and appears in the local
-preview. Entering it does not upload, schedule, or publish the article. Until a
-separate scheduling workflow exists, the future publishing command will require
-an explicit author action and reject publication before this timestamp. Keep the
-timestamp quoted so YAML preserves the explicit timezone for validation.
+preview. Entering it does not upload, schedule, or publish the article. The
+publishing command requires an explicit author action and rejects publication
+before this timestamp. Keep the timestamp quoted so YAML preserves the explicit
+timezone for validation.
 
 ## Validate
 
@@ -85,8 +85,7 @@ builds do not expose private files.
 
 ## Review a private article
 
-Before publishing is implemented, the author-facing review consists entirely of
-local validation and preview:
+Before publishing, complete this local review:
 
 1. Run `npm run article:validate` and resolve every reported error.
 2. Run `npm run article:preview` and open the route printed for the article.
@@ -95,6 +94,80 @@ local validation and preview:
 4. Review a representative desktop width and a narrow mobile width, including
    keyboard navigation and 200% zoom.
 
-Completing this review does not upload, schedule, or publish the article. The
-publishing workflow will add its own dry-run, non-production mutation,
-deployment, and recovery checks when it is implemented.
+Completing this review does not upload, schedule, or publish the article.
+
+## Configure publishing
+
+Publishing uses a Supabase secret key from an ignored, environment-specific
+file. Secret keys bypass Row Level Security and must never be committed, placed
+in Vercel, copied into `.env`, or exposed to browser code.
+
+Create the Preview file from the tracked example:
+
+```sh
+cp .env.publish.example .env.publish.preview
+```
+
+Enter the Preview project's URL and `sb_secret_...` key. The Preview file does
+not need a Vercel deploy hook. Create Production separately:
+
+```sh
+cp .env.publish.example .env.publish.production
+```
+
+Enter the Production project's URL, its different secret key, and the
+Production-branch Vercel Deploy Hook URL. Never copy values between these two
+files. The commands report missing or invalid configuration without printing a
+credential.
+
+## Publish
+
+Run a dry run first. The command validates the file, connects to only the named
+environment, and reports whether it would create, update, or leave the article
+unchanged:
+
+```sh
+npm run article:publish -- authoring/articles/example-article.md --environment preview
+```
+
+Apply the reviewed Preview change explicitly:
+
+```sh
+npm run article:publish -- authoring/articles/example-article.md --environment preview --apply
+```
+
+Place the Preview project's URL and publishable key in the ordinary ignored
+`.env` build file, run `npm run build && npm run preview`, and inspect the
+generated article locally. Preview publishing does not trigger a permanent
+Vercel deployment.
+
+Repeat the dry run against Production, then apply it:
+
+```sh
+npm run article:publish -- authoring/articles/example-article.md --environment production
+npm run article:publish -- authoring/articles/example-article.md --environment production --apply
+```
+
+Production apply asks you to type `publish <slug>` before it writes. A successful
+change triggers the Production Vercel build. An identical rerun changes nothing
+and does not request another deployment. Changing a slug creates a separate
+article; archive the old slug explicitly after verifying the new one.
+
+## Unpublish
+
+Unpublishing archives an article without deleting its content or publication
+date. Preview it first, then apply it to the intended environment:
+
+```sh
+npm run article:unpublish -- example-article --environment preview
+npm run article:unpublish -- example-article --environment preview --apply
+```
+
+Production follows the same dry-run and apply sequence and asks you to type
+`unpublish <slug>`. A successful Production archive triggers a static rebuild so
+the article disappears from public routes and listings.
+
+If Supabase changes successfully but the Vercel Deploy Hook fails, the command
+says that the database change was retained. Redeploy the current Production
+commit from the Vercel dashboard, then verify the public site. Do not repeat the
+database mutation merely to force another build.

@@ -76,6 +76,15 @@ comments, categories, or images before those features have approved behavior.
 The anonymous Data API role has `select` permission only, filtered by Row Level
 Security. It cannot retrieve drafts or archived rows and has no write grants.
 
+The local publishing commands use a separate server-only Supabase secret key to
+create, update, and archive articles
+([ADR 0006](../architecture/decisions/0006-publish-articles-with-a-local-administrative-command.md)).
+That key bypasses Row Level Security and belongs only in the author's ignored
+`.env.publish.preview` or `.env.publish.production` file. It must not be used by
+reader-facing application code, Vercel, CI, or the ordinary `.env` build file.
+The administrative role receives only `select`, `insert`, and `update` table
+privileges; it does not receive `delete`.
+
 ## Application access
 
 Reader-facing code accesses articles through `src/data/articles.ts`, rather than
@@ -93,8 +102,8 @@ them to browser bundles by default.
 
 Astro retrieves article data while producing a static build
 ([ADR 0004](../architecture/decisions/0004-retrieve-articles-at-build-time.md)).
-Publishing will therefore need to trigger a Vercel deployment before new content
-appears on the site.
+Production publishing therefore triggers a Vercel deployment before changed
+content appears on the site.
 
 ## Repository ownership
 
@@ -143,3 +152,4 @@ corrective migration; do not rewrite or delete an applied migration.
 - [Supabase local development](https://supabase.com/docs/guides/local-development)
 - [Supabase local development workflow](https://supabase.com/docs/guides/local-development/cli-workflows)
 - [Supabase deployment and branching](https://supabase.com/docs/guides/deployment)
+- [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys)

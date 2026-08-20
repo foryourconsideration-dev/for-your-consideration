@@ -56,6 +56,20 @@ Environment changes apply to new deployments. Trigger or redeploy the intended
 environment after changing a value, then verify the build and reader-facing
 data before promoting the change.
 
+## Article publishing deployment hook
+
+Because article pages are generated at build time, a successful Production
+publish or archive posts to a Vercel Deploy Hook for `main`. Store that private
+hook URL only in the ignored `.env.publish.production` file as
+`VERCEL_DEPLOY_HOOK_URL`; it does not belong in Vercel, GitHub, CI, screenshots,
+or terminal logs. Preview publishing is verified with a local build and does not
+use a permanent branch deploy hook.
+
+The publishing command requests a deployment only after a real database change.
+If Supabase changes successfully but Vercel rejects the hook, use the Vercel
+dashboard to redeploy the current Production commit. The database change remains
+in place, so do not modify the article again solely to request another build.
+
 ## Rollback
 
 For an urgent hosting rollback, use Vercel's Instant Rollback to restore the
@@ -70,3 +84,4 @@ rollback.
 - [Deploying Git repositories with Vercel](https://vercel.com/docs/git)
 - [Deployment protection](https://vercel.com/kb/guide/locking-down-deployments)
 - [Performing an Instant Rollback](https://vercel.com/docs/instant-rollback)
+- [Set up and use Deploy Hooks](https://vercel.com/kb/guide/set-up-and-use-deploy-hooks-with-vercel-and-headless-cms)
