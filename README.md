@@ -29,7 +29,7 @@ The development server is available at `http://localhost:4321`.
 
 | Command                     | Purpose                                                |
 | --------------------------- | ------------------------------------------------------ |
-| `npm run article:publish`   | Dry-run or publish one private article.                |
+| `npm run article:publish`   | Guide one article from Preview to Production.          |
 | `npm run article:validate`  | Validate private local article files.                  |
 | `npm run article:preview`   | Preview private articles with production rendering.    |
 | `npm run article:unpublish` | Dry-run or archive one published article.              |
