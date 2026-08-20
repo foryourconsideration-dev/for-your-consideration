@@ -9,6 +9,13 @@ export interface PublishingArguments {
   target: string;
 }
 
+export type ArticlePublicationArguments =
+  | {
+      mode: "guided";
+      target: string;
+    }
+  | ({ mode: "targeted" } & PublishingArguments);
+
 export class PublishingArgumentsError extends Error {
   constructor(message: string) {
     super(message);
@@ -59,5 +66,31 @@ export function parsePublishingArguments(
     apply,
     environment: parsePublishingEnvironmentName(environmentValue),
     target,
+  };
+}
+
+export function parseArticlePublicationArguments(
+  values: string[],
+): ArticlePublicationArguments {
+  const usesTargetedOption = values.some(
+    (value) => value === "--environment" || value === "--apply",
+  );
+
+  if (usesTargetedOption) {
+    return {
+      mode: "targeted",
+      ...parsePublishingArguments(values, "Markdown article file"),
+    };
+  }
+
+  if (values.length !== 1 || values[0]?.startsWith("--")) {
+    throw new PublishingArgumentsError(
+      "Provide exactly one Markdown article file.",
+    );
+  }
+
+  return {
+    mode: "guided",
+    target: values[0],
   };
 }

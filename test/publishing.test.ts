@@ -4,8 +4,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, it } from "node:test";
 
-import { parsePublishingArguments } from "../src/lib/publishing/arguments.ts";
 import {
+  parseArticlePublicationArguments,
+  parsePublishingArguments,
+} from "../src/lib/publishing/arguments.ts";
+import {
+  type ArticlePublishingRepository,
   ArticlePublishingError,
   planPublication,
   planUnpublication,
@@ -16,8 +20,14 @@ import {
 } from "../src/lib/publishing/deployment.ts";
 import {
   PublishingConfigurationError,
+  readLocalPreviewBuildEnvironment,
   readPublishingEnvironment,
 } from "../src/lib/publishing/environment.ts";
+import { runGuidedPublication } from "../src/lib/publishing/guided-workflow.ts";
+import {
+  applyPublicationInstructions,
+  previewReviewInstructions,
+} from "../src/lib/publishing/messages.ts";
 import type { Database } from "../src/types/database.ts";
 
 type ArticleRow = Database["public"]["Tables"]["articles"]["Row"];
@@ -46,6 +56,13 @@ function row(overrides: Partial<ArticleRow> = {}): ArticleRow {
 }
 
 describe("publishing arguments", () => {
+  it("uses the guided workflow when given only an article file", () => {
+    assert.deepEqual(parseArticlePublicationArguments(["article.md"]), {
+      mode: "guided",
+      target: "article.md",
+    });
+  });
+
   it("defaults to a dry run and requires an explicit environment", () => {
     assert.deepEqual(
       parsePublishingArguments(
@@ -73,6 +90,148 @@ describe("publishing arguments", () => {
       ).apply,
       true,
     );
+  });
+
+  it("retains targeted publishing for recovery and testing", () => {
+    assert.deepEqual(
+      parseArticlePublicationArguments([
+        "article.md",
+        "--environment",
+        "preview",
+        "--apply",
+      ]),
+      {
+        apply: true,
+        environment: "preview",
+        mode: "targeted",
+        target: "article.md",
+      },
+    );
+  });
+});
+
+describe("guided publication", () => {
+  function repository(
+    current: ArticleRow | null,
+    writes: string[],
+  ): ArticlePublishingRepository {
+    return {
+      async archive() {},
+      async findBySlug() {
+        return current;
+      },
+      async upsertPublished(value) {
+        writes.push(value.slug);
+      },
+    };
+  }
+
+  function dependencies(options: {
+    continueDecisions?: boolean[];
+    previewCurrent?: ArticleRow | null;
+    productionCurrent?: ArticleRow | null;
+    publishDecision?: boolean;
+    reviewDecision?: boolean;
+  }) {
+    const previewWrites: string[] = [];
+    const productionWrites: string[] = [];
+    const messages: string[] = [];
+    let deployments = 0;
+    const continueDecisions = [...(options.continueDecisions ?? [true])];
+
+    return {
+      dependencies: {
+        async createRepository(environment: "preview" | "production") {
+          return environment === "preview"
+            ? repository(options.previewCurrent ?? null, previewWrites)
+            : repository(options.productionCurrent ?? null, productionWrites);
+        },
+        async deployProduction() {
+          deployments += 1;
+        },
+        prompts: {
+          async continueOrStop() {
+            return continueDecisions.shift() ?? false;
+          },
+          async publishOrStop() {
+            return options.publishDecision ?? true;
+          },
+        },
+        async reviewPreview() {
+          return options.reviewDecision ?? true;
+        },
+        write(message: string) {
+          messages.push(message);
+        },
+      },
+      messages,
+      productionWrites,
+      previewWrites,
+      readDeployments: () => deployments,
+    };
+  }
+
+  it("can stop before uploading to Preview", async () => {
+    const workflow = dependencies({ continueDecisions: [false] });
+
+    assert.equal(
+      await runGuidedPublication(article, workflow.dependencies),
+      "stopped-before-preview",
+    );
+    assert.deepEqual(workflow.previewWrites, []);
+    assert.deepEqual(workflow.productionWrites, []);
+    assert.equal(workflow.readDeployments(), 0);
+  });
+
+  it("can stop after Preview review without changing Production", async () => {
+    const workflow = dependencies({ reviewDecision: false });
+
+    assert.equal(
+      await runGuidedPublication(article, workflow.dependencies),
+      "stopped-before-production",
+    );
+    assert.deepEqual(workflow.previewWrites, [article.slug]);
+    assert.deepEqual(workflow.productionWrites, []);
+    assert.equal(workflow.readDeployments(), 0);
+  });
+
+  it("uploads Preview and publishes Production after both confirmations", async () => {
+    const workflow = dependencies({});
+
+    assert.equal(
+      await runGuidedPublication(article, workflow.dependencies),
+      "published",
+    );
+    assert.deepEqual(workflow.previewWrites, [article.slug]);
+    assert.deepEqual(workflow.productionWrites, [article.slug]);
+    assert.equal(workflow.readDeployments(), 1);
+  });
+
+  it("can stop at the Production confirmation", async () => {
+    const workflow = dependencies({ publishDecision: false });
+
+    assert.equal(
+      await runGuidedPublication(article, workflow.dependencies),
+      "stopped-before-production",
+    );
+    assert.deepEqual(workflow.previewWrites, [article.slug]);
+    assert.deepEqual(workflow.productionWrites, []);
+    assert.equal(workflow.readDeployments(), 0);
+  });
+
+  it("does not redeploy when Production already matches", async () => {
+    const workflow = dependencies({
+      previewCurrent: row(),
+      productionCurrent: row(),
+    });
+
+    assert.equal(
+      await runGuidedPublication(article, workflow.dependencies),
+      "unchanged",
+    );
+    assert.deepEqual(workflow.previewWrites, []);
+    assert.deepEqual(workflow.productionWrites, []);
+    assert.equal(workflow.readDeployments(), 0);
   });
 });
 
@@ -105,6 +264,23 @@ describe("publication planning", () => {
       () => planUnpublication(row({ status: "draft" }), article.slug),
       ArticlePublishingError,
     );
+  });
+});
+
+describe("publishing guidance", () => {
+  it("explains how to review a database-backed Preview article", () => {
+    const instructions = previewReviewInstructions("example-article");
+
+    assert.match(instructions, /npm run build/);
+    assert.match(instructions, /npm run preview/);
+    assert.match(
+      instructions,
+      /http:\/\/localhost:4321\/articles\/example-article\//,
+    );
+  });
+
+  it("identifies the explicit action after a dry run", () => {
+    assert.match(applyPublicationInstructions(), /--apply/);
   });
 });
 
@@ -154,6 +330,47 @@ describe("publishing environment", () => {
         assert.ok(error instanceof PublishingConfigurationError);
         assert.doesNotMatch(error.message, /private-value/);
         return true;
+      },
+    );
+  });
+
+  it("requires the local review build to use the Preview project", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "fyc-publishing-"));
+    await writeFile(
+      join(directory, ".env.local"),
+      [
+        "SUPABASE_URL=https://production.supabase.co",
+        "SUPABASE_PUBLISHABLE_KEY=sb_publishable_example",
+      ].join("\n"),
+    );
+
+    await assert.rejects(
+      readLocalPreviewBuildEnvironment(
+        "https://preview.supabase.co",
+        directory,
+      ),
+      /same Preview Supabase project/,
+    );
+  });
+
+  it("loads the publishable configuration for Preview review", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "fyc-publishing-"));
+    await writeFile(
+      join(directory, ".env.local"),
+      [
+        "SUPABASE_URL=https://preview.supabase.co",
+        "SUPABASE_PUBLISHABLE_KEY=sb_publishable_example",
+      ].join("\n"),
+    );
+
+    assert.deepEqual(
+      await readLocalPreviewBuildEnvironment(
+        "https://preview.supabase.co",
+        directory,
+      ),
+      {
+        supabasePublishableKey: "sb_publishable_example",
+        supabaseUrl: "https://preview.supabase.co/",
       },
     );
   });

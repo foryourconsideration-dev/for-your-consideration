@@ -52,8 +52,9 @@ The development server is available at `http://localhost:4321`.
 | `npm run preview`           | Serve the production build locally.                    |
 | `npm run validate`          | Run formatting, linting, Astro, and TypeScript checks. |
 
-See the [local authoring guide](docs/authoring/guide.md) before creating or
-previewing private article files.
+Complete [authoring setup](docs/authoring/setup.md) once, then use the
+[local authoring guide](docs/authoring/guide.md) to create, preview, and publish
+private article files.
 
 See the [testing guide](docs/engineering/testing.md) for contributor and CI
 verification.

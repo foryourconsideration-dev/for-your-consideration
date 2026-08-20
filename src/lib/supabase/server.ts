@@ -16,7 +16,15 @@ function requireEnvironmentValue(
   const value = environment[name]?.trim();
 
   if (!value) {
-    throw new Error(`Missing ${name}. Add it to the server environment.`);
+    if (name === "SUPABASE_PUBLISHABLE_KEY") {
+      throw new Error(
+        "Missing SUPABASE_PUBLISHABLE_KEY. For a local build, add the target project's sb_publishable_... key to the ignored .env.local file. Never put SUPABASE_SECRET_KEY in the build file.",
+      );
+    }
+
+    throw new Error(
+      "Missing SUPABASE_URL. For a local build, add the target project's URL to the ignored .env.local file. Build configuration is separate from the privileged .env.publish.* files.",
+    );
   }
 
   return value;

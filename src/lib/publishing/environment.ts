@@ -11,6 +11,11 @@ export interface PublishingEnvironment {
   supabaseUrl: string;
 }
 
+export interface LocalPreviewBuildEnvironment {
+  supabasePublishableKey: string;
+  supabaseUrl: string;
+}
+
 export class PublishingConfigurationError extends Error {
   constructor(message: string) {
     super(message);
@@ -123,4 +128,55 @@ export async function readPublishingEnvironment(
     supabaseSecretKey,
     supabaseUrl,
   };
+}
+
+export async function readLocalPreviewBuildEnvironment(
+  expectedPreviewUrl: string,
+  directory = process.cwd(),
+): Promise<LocalPreviewBuildEnvironment> {
+  const fileName = ".env.local";
+  let source: string;
+
+  try {
+    source = await readFile(resolve(directory, fileName), "utf8");
+  } catch {
+    throw new PublishingConfigurationError(
+      `${fileName} is missing or could not be read. Complete the database-backed Preview setup before publishing.`,
+    );
+  }
+
+  let values: ReturnType<typeof parseEnv>;
+
+  try {
+    values = parseEnv(source);
+  } catch {
+    throw new PublishingConfigurationError(
+      `${fileName} contains invalid environment-file syntax.`,
+    );
+  }
+
+  const supabaseUrl = requireHttpsUrl(
+    requireValue(values, "SUPABASE_URL", fileName),
+    "SUPABASE_URL",
+    fileName,
+  );
+  const supabasePublishableKey = requireValue(
+    values,
+    "SUPABASE_PUBLISHABLE_KEY",
+    fileName,
+  );
+
+  if (!supabasePublishableKey.startsWith("sb_publishable_")) {
+    throw new PublishingConfigurationError(
+      `SUPABASE_PUBLISHABLE_KEY in ${fileName} must be a Supabase publishable key beginning with sb_publishable_.`,
+    );
+  }
+
+  if (supabaseUrl !== new URL(expectedPreviewUrl).toString()) {
+    throw new PublishingConfigurationError(
+      `${fileName} must use the same Preview Supabase project as .env.publish.preview.`,
+    );
+  }
+
+  return { supabasePublishableKey, supabaseUrl };
 }

@@ -28,10 +28,19 @@ server runtime for a workflow used from one trusted computer.
 
 Publish and unpublish through repository-owned commands run locally by the sole
 author. Keep separate ignored environment files for Preview and Production, each
-containing that Supabase project's server-only secret key. Require an explicit
-environment on every command, default to a read-only dry run, and require
-`--apply` before any mutation. Require an additional typed confirmation before a
-Production mutation.
+containing that Supabase project's server-only secret key.
+
+Make ordinary publishing one guided command that validates the article, shows
+the planned Preview change, and accepts `continue` or `stop` before writing. It
+then builds and serves the database-backed Preview site locally while the
+command waits for the author to review it. Continuing shows the planned
+Production change and requires the author to type `publish <slug>` before the
+Production write and Vercel deployment request. Stopping at any prompt preserves
+the last completed environment and does not advance to the next one.
+
+Retain environment-specific dry-run and `--apply` options for testing and
+recovery, and retain the explicit environment workflow for unpublishing. These
+lower-level modes must never select Production implicitly.
 
 Publishing consumes the validated local Markdown contract from
 [ADR 0005](0005-author-and-preview-articles-locally.md). It creates or updates
@@ -53,6 +62,10 @@ Production from Vercel.
 - Private article source and administrative credentials remain outside Git and
   browser bundles.
 - A dry run shows create, update, archive, or unchanged behavior before a write.
+- The ordinary author workflow can move through Preview review and Production
+  publishing without assembling several commands manually.
+- The local review server runs only while the guided command waits for the
+  author's decision and stops before the workflow exits or changes Production.
 - Preview and Production credentials cannot be selected implicitly or shared by
   one environment file.
 - Idempotent reruns avoid duplicate rows, unnecessary updates, and unnecessary
