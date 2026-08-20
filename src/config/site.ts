@@ -1,4 +1,6 @@
 export const site = {
+  description:
+    "For Your Consideration is a blog featuring opinions, commentary, and reflections on a wide range of topics.",
   copy: {
     article: {
       notesHeading: "Notes",

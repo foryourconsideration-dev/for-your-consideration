@@ -3,7 +3,10 @@ import { site } from "../config/site";
 import SiteLayout from "../layouts/SiteLayout.astro";
 ---
 
-<SiteLayout pageTitle={site.copy.pages.notFound.title}>
+<SiteLayout
+  description={site.copy.pages.notFound.description}
+  pageTitle={site.copy.pages.notFound.title}
+>
   <main class="page-container not-found-page">
     <div class="reading-container">
       <h1>{site.copy.pages.notFound.title}</h1>
