@@ -10,7 +10,7 @@ describe("server Supabase configuration", () => {
         createServerSupabaseClient({
           SUPABASE_PUBLISHABLE_KEY: "publishable-key",
         }),
-      /Missing SUPABASE_URL/,
+      /Missing SUPABASE_URL.*\.env\.local.*\.env\.publish/s,
     );
   });
 
@@ -20,7 +20,7 @@ describe("server Supabase configuration", () => {
         createServerSupabaseClient({
           SUPABASE_URL: "http://127.0.0.1:55321",
         }),
-      /Missing SUPABASE_PUBLISHABLE_KEY/,
+      /Missing SUPABASE_PUBLISHABLE_KEY.*\.env\.local.*Never put SUPABASE_SECRET_KEY/s,
     );
   });
 

@@ -5,13 +5,23 @@ The directory is Git-ignored and ordinary builds do not read it. Do not place
 private writing in test fixtures, screenshots, terminal output, or any other
 tracked path.
 
+Before publishing for the first time, complete the
+[authoring setup](setup.md).
+
+## Workflow at a glance
+
+1. Write, validate, and preview the private Markdown file locally.
+2. Start the guided publishing command.
+3. Choose whether to upload to Preview, review the database-backed site, and
+   choose whether to continue to Production.
+4. Confirm Production publishing. Production requests a Vercel deployment
+   automatically.
+
+The guided command pauses at every change boundary and accepts an explicit stop.
+Preview and Production remain separate, and no prompt advances to Production
+without the author's confirmation.
+
 ## Create an article
-
-Create the private directory if it does not exist:
-
-```sh
-mkdir -p authoring/articles
-```
 
 Add one Markdown file per article. The filename is for local organization; the
 frontmatter `slug` controls the eventual article URL.
@@ -106,60 +116,58 @@ Completing this review does not upload, schedule, or publish the article.
 
 ## Configure publishing
 
-Publishing uses a Supabase secret key from an ignored, environment-specific
-file. Secret keys bypass Row Level Security and must never be committed, placed
-in Vercel, copied into `.env`, or exposed to browser code.
-
-Create the Preview file from the tracked example:
-
-```sh
-cp .env.publish.example .env.publish.preview
-```
-
-Enter the Preview project's URL and `sb_secret_...` key. The Preview file does
-not need a Vercel deploy hook. Create Production separately:
-
-```sh
-cp .env.publish.example .env.publish.production
-```
-
-Enter the Production project's URL, its different secret key, and the
-Production-branch Vercel Deploy Hook URL. Never copy values between these two
-files. The commands report missing or invalid configuration without printing a
-credential.
+Complete the one-time [authoring setup](setup.md) before using the publishing
+commands. It explains which Preview and Production credentials belong in each
+ignored environment file.
 
 ## Publish
 
-Run a dry run first. The command validates the file, connects to only the named
-environment, and reports whether it would create, update, or leave the article
-unchanged:
+Start the complete guided workflow with one article file:
+
+```sh
+npm run article:publish -- authoring/articles/example-article.md
+```
+
+The command:
+
+1. Validates the private article.
+2. Reports whether Preview would create, update, or leave it unchanged.
+3. Accepts `continue` or `stop` before a Preview write.
+4. Builds and serves the database-backed Preview homepage and article locally.
+5. Leaves that server running while the author reviews both URLs.
+6. Accepts `continue` or `stop` after review, then closes the local server.
+7. Reports the Production change and accepts either `publish <slug>` or `stop`.
+8. Writes the confirmed article to Production and requests a Vercel deployment.
+
+Stopping before the Preview upload changes neither environment. Stopping after
+the Preview upload leaves the reviewed Preview row intact but does not change
+Production. An unchanged environment is not rewritten, and unchanged Production
+does not request another deployment.
+
+The local database-backed review uses the Preview publishable configuration from
+`.env.local`. A Preview database change does not trigger a permanent Vercel
+deployment.
+
+### Target one environment
+
+Environment-specific commands remain available for troubleshooting and
+recovery. Without `--apply`, they are read-only dry runs:
 
 ```sh
 npm run article:publish -- authoring/articles/example-article.md --environment preview
-```
-
-Apply the reviewed Preview change explicitly:
-
-```sh
 npm run article:publish -- authoring/articles/example-article.md --environment preview --apply
 ```
 
-Place the Preview project's URL and publishable key in the ordinary ignored
-`.env` build file, run `npm run build && npm run preview`, and inspect the
-generated article locally. Preview publishing does not trigger a permanent
-Vercel deployment.
-
-Repeat the dry run against Production, then apply it:
+Production uses the same targeted form and retains its typed confirmation:
 
 ```sh
 npm run article:publish -- authoring/articles/example-article.md --environment production
 npm run article:publish -- authoring/articles/example-article.md --environment production --apply
 ```
 
-Production apply asks you to type `publish <slug>` before it writes. A successful
-change triggers the Production Vercel build. An identical rerun changes nothing
-and does not request another deployment. Changing a slug creates a separate
-article; archive the old slug explicitly after verifying the new one.
+A successful Production change triggers the Vercel build. Changing a slug
+creates a separate article; archive the old slug explicitly after verifying the
+new one.
 
 ## Unpublish
 

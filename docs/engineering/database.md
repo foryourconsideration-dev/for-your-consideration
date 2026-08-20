@@ -81,7 +81,8 @@ create, update, and archive articles
 ([ADR 0006](../architecture/decisions/0006-publish-articles-with-a-local-administrative-command.md)).
 That key bypasses Row Level Security and belongs only in the author's ignored
 `.env.publish.preview` or `.env.publish.production` file. It must not be used by
-reader-facing application code, Vercel, CI, or the ordinary `.env` build file.
+reader-facing application code, Vercel, CI, or the ordinary `.env.local` build
+file.
 The administrative role receives only `select`, `insert`, and `update` table
 privileges; it does not receive `delete`.
 
@@ -94,11 +95,11 @@ an empty list, an unknown slug returns `null`, and database failures throw an
 `ArticleDataError` so callers do not confuse an outage with missing content.
 
 The server-only client in `src/lib/supabase/server.ts` requires
-`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Copy `.env.example` to `.env` and
-fill in values for the Supabase environment being used. Local values are shown
-by `npm run db:status`; never commit the resulting `.env` file. These variables
-intentionally omit Astro's `PUBLIC_` prefix so application code cannot expose
-them to browser bundles by default.
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Copy `.env.example` to
+`.env.local` and fill in values for the Supabase environment being used. Local
+values are shown by `npm run db:status`; never commit the resulting file. These
+variables intentionally omit Astro's `PUBLIC_` prefix so application code
+cannot expose them to browser bundles by default.
 
 Astro retrieves article data while producing a static build
 ([ADR 0004](../architecture/decisions/0004-retrieve-articles-at-build-time.md)).

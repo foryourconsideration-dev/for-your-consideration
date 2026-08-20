@@ -49,7 +49,7 @@ Row Level Security; it is not an administrative credential.
 
 Do not add database passwords, secret keys, service-role keys, private drafts,
 or Supabase access tokens to Vercel. Local development continues to use an
-ignored `.env` file and the local Supabase values reported by
+ignored `.env.local` file and the local Supabase values reported by
 `npm run db:status`.
 
 Environment changes apply to new deployments. Trigger or redeploy the intended
