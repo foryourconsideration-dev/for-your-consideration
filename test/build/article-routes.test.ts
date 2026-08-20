@@ -24,7 +24,10 @@ describe("built article routes", () => {
     );
   });
 
-  it("does not generate routes for unavailable articles", () => {
+  it("generates routes only for available articles", () => {
+    assert.equal(existsSync(articleOutput("published-article-one")), true);
+    assert.equal(existsSync(articleOutput("published-article-two")), true);
+    assert.equal(existsSync(articleOutput("published-article-three")), true);
     assert.equal(existsSync(articleOutput("draft-article")), false);
     assert.equal(existsSync(articleOutput("archived-article")), false);
     assert.equal(existsSync(articleOutput("missing-article")), false);

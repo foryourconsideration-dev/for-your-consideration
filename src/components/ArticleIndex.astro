@@ -1,0 +1,96 @@
+---
+import { site } from "../config/site";
+import type { PublishedArticleSummary } from "../data/articles";
+import { formatPublicationDate } from "../lib/dates/format-publication-date";
+
+interface Props {
+  articles: PublishedArticleSummary[];
+}
+
+const { articles } = Astro.props;
+---
+
+<section class="article-index" aria-labelledby="article-index-heading">
+  <h2 id="article-index-heading" class="visually-hidden">
+    {site.copy.pages.home.articleListHeading}
+  </h2>
+
+  {
+    articles.length > 0 ? (
+      <ol class="article-list">
+        {articles.map((article) => (
+          <li class="article-list-item">
+            <article>
+              <h3 class="article-list-title">
+                <a href={`/articles/${article.slug}/`}>{article.title}</a>
+              </h3>
+              {article.subtitle && (
+                <p class="article-list-subtitle">{article.subtitle}</p>
+              )}
+              <p class="article-list-metadata">
+                <time datetime={article.publishedAt}>
+                  {formatPublicationDate(article.publishedAt)}
+                </time>
+              </p>
+            </article>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p class="article-index-empty">{site.copy.pages.home.emptyState}</p>
+    )
+  }
+</section>
+
+<style>
+  .article-index {
+    width: min(100%, 62rem);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 8vw, 7rem);
+  }
+
+  .article-list {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .article-list-title {
+    margin: 0;
+    font-size: clamp(1.25rem, 1.75vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .article-list-title a {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .article-list-title a:hover,
+  .article-list-title a:focus-visible {
+    color: var(--color-interactive);
+  }
+
+  .article-list-subtitle {
+    max-width: 55ch;
+    margin-block: 0.65rem 0;
+    color: var(--color-muted);
+    font-size: 1.05em;
+    line-height: 1.4;
+  }
+
+  .article-list-metadata {
+    margin-block: 0.75rem 0;
+    color: var(--color-muted);
+    font-size: 0.9em;
+  }
+
+  .article-index-empty {
+    margin: 0;
+    color: var(--color-muted);
+  }
+</style>

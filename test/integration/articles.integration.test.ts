@@ -36,7 +36,11 @@ describe("article repository with local Supabase", () => {
 
     assert.deepEqual(
       articles.map(({ slug }: PublishedArticleSummary) => slug),
-      ["published-article-one", "published-article-two"],
+      [
+        "published-article-one",
+        "published-article-two",
+        "published-article-three",
+      ],
     );
   });
 

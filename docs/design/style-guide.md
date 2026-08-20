@@ -13,11 +13,13 @@ spacing create hierarchy; decoration should not compete with the writing.
 | Primary text   | `#1C1B1A` |
 | Secondary text | `#55524E` |
 | Rules          | `#C9C5BC` |
+| Interactive    | `#842F4B` |
 
 Primary text has a WCAG contrast ratio of `17.04:1` against the canvas. The
-secondary text ratio is `7.70:1`. The warmth of the palette is an aesthetic
-choice; readability depends on its dark-on-light polarity and strong luminance
-contrast, not on a claim that these exact colors prevent eye strain.
+secondary text ratio is `7.70:1`, and the interactive color ratio is `8.36:1`.
+The warmth of the palette is an aesthetic choice; readability depends on its
+dark-on-light polarity and strong luminance contrast, not on a claim that these
+exact colors prevent eye strain.
 
 ## Typography
 
@@ -46,12 +48,25 @@ documented in the [content style guide](content-style.md).
 - Let the masthead scale fluidly so the publication name remains on one line.
 - Apply the masthead's restrained vertical scaling only to the publication name.
 
+## Article index
+
+List published articles in reverse chronological order. Each entry includes a
+linked title, its optional subtitle, and its publication date; omit absent
+subtitles without leaving empty space. Keep the whole entry legible at narrow
+widths, but make only the title the link so its interactive target is explicit.
+
+Do not display body excerpts or paginate the index until the amount of published
+content creates a demonstrated need.
+
 ## Links and focus
 
-Text links are underlined without relying on color alone. Every interactive
-element must have a visible `:focus-visible` outline with adequate separation
-from the element. The masthead uses a heavy underline instead of a surrounding
-outline so its focus state remains visible without appearing boxed in.
+Inline text links are underlined without relying on color alone. Linked article
+titles may omit the underline because their heading and index context identify
+them as navigation; they shift to the interactive color on hover and retain a
+visible `:focus-visible` outline for keyboard navigation. Every other interactive
+element must also have a visible focus indicator with adequate separation. The
+masthead uses a heavy underline instead of a surrounding outline so its focus
+state remains visible without appearing boxed in.
 
 ## Footnotes
 
@@ -61,5 +76,7 @@ maintaining sufficient contrast and line spacing.
 
 ## Motion
 
-Do not require motion to understand or operate the site. Disable smooth scrolling
-when the reader requests reduced motion.
+Do not require motion to understand or operate the site. Internal page navigation
+uses a brief fade while the shared masthead remains in place. Keep transitions
+subtle and disable animation, including smooth scrolling, when the reader requests
+reduced motion.

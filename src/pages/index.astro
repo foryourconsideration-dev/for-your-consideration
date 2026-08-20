@@ -1,10 +1,15 @@
 ---
+import ArticleIndex from "../components/ArticleIndex.astro";
 import { site } from "../config/site";
+import { listPublishedArticles } from "../data/articles";
 import SiteLayout from "../layouts/SiteLayout.astro";
+
+const articles = await listPublishedArticles();
 ---
 
 <SiteLayout>
   <main class="page-container">
     <h1 class="visually-hidden">{site.title}</h1>
+    <ArticleIndex articles={articles} />
   </main>
 </SiteLayout>
