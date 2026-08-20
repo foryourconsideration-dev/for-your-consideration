@@ -32,6 +32,7 @@ Statement with a note.[^1]
     assert.match(html, /id="user-content-fn-1"/);
     assert.match(html, /href="#user-content-fnref-1"/);
     assert.match(html, /aria-label="Back to reference 1"/);
+    assert.match(html, />↩︎<\/a>/);
   });
 
   it("drops raw HTML and removes unsafe link destinations", async () => {
