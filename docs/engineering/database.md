@@ -1,9 +1,9 @@
 # Database development
 
 Supabase provides the local PostgreSQL environment and the secured article data
-model ([ADR 0002](architecture/decisions/0002-use-supabase-for-application-data.md)).
+model ([ADR 0002](../architecture/decisions/0002-use-supabase-for-application-data.md)).
 Article bodies are stored as Markdown
-([ADR 0003](architecture/decisions/0003-store-article-bodies-as-markdown.md)).
+([ADR 0003](../architecture/decisions/0003-store-article-bodies-as-markdown.md)).
 Preview and Production use separate hosted Supabase projects. Both run in the
 same region and receive schema changes from this repository's migrations; local
 development remains isolated in the local stack.
@@ -92,7 +92,7 @@ intentionally omit Astro's `PUBLIC_` prefix so application code cannot expose
 them to browser bundles by default.
 
 Astro retrieves article data while producing a static build
-([ADR 0004](architecture/decisions/0004-retrieve-articles-at-build-time.md)).
+([ADR 0004](../architecture/decisions/0004-retrieve-articles-at-build-time.md)).
 Publishing will therefore need to trigger a Vercel deployment before new content
 appears on the site.
 

@@ -33,6 +33,13 @@ describe("built article routes", () => {
     assert.equal(existsSync(articleOutput("missing-article")), false);
   });
 
+  it("does not generate local authoring previews in an ordinary build", () => {
+    assert.equal(
+      existsSync("dist/preview/articles/fixture-article/index.html"),
+      false,
+    );
+  });
+
   it("omits optional subtitle markup when an article has no subtitle", () => {
     const html = readFileSync(articleOutput("published-article-two"), "utf8");
 

@@ -4,6 +4,29 @@ Article titles, subtitles, publication dates, and future attribution metadata
 belong to the article record. The article body contains Markdown only and starts
 with prose or a section heading rather than repeating the article title.
 
+## Local file format
+
+Private local article files use YAML frontmatter followed by the Markdown body:
+
+```md
+---
+slug: example-article
+title: Example article
+subtitle: An optional subtitle
+publishedAt: "2026-08-20T09:00:00-07:00"
+---
+
+The article body starts here.
+```
+
+`slug`, `title`, and `publishedAt` are required. `subtitle` is optional and
+should be omitted rather than left blank. Do not add publication status, author,
+or byline fields. The complete validation rules and commands are documented in
+the [local authoring guide](guide.md).
+
+Frontmatter is not part of `body_markdown`; validation separates it before the
+body enters the production renderer.
+
 ## Supported Markdown
 
 Article bodies may use:
