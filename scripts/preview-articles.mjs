@@ -4,15 +4,31 @@ import { resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath, URL } from "node:url";
 
-import {
-  ArticleFileError,
-  readAuthoringDirectory,
-} from "../src/lib/authoring/article-files.ts";
-
 const authoringDirectory = resolve(process.cwd(), "authoring/articles");
+const commandArguments = process.argv.slice(2);
+const articleArgument = commandArguments[0]?.startsWith("-")
+  ? undefined
+  : commandArguments.shift();
+const articleFile = articleArgument
+  ? resolve(process.cwd(), articleArgument)
+  : undefined;
 
 try {
-  const articles = await readAuthoringDirectory(authoringDirectory);
+  const [nodeMajorVersion, nodeMinorVersion] = process.versions.node
+    .split(".")
+    .map(Number);
+
+  if (nodeMajorVersion !== 24 || nodeMinorVersion < 16) {
+    throw new Error(
+      "Article preview requires Node.js 24.16 through 24.x. Switch Node versions and try again.",
+    );
+  }
+
+  const { ArticleFileError, readAuthoringArticle, readAuthoringDirectory } =
+    await import("../src/lib/authoring/article-files.ts");
+  const articles = articleFile
+    ? [await readAuthoringArticle(articleFile)]
+    : await readAuthoringDirectory(authoringDirectory);
 
   if (articles.length === 0) {
     throw new ArticleFileError("No Markdown article files were found.");
@@ -28,16 +44,25 @@ try {
   }
 
   const astroCli = fileURLToPath(
-    new URL("../node_modules/astro/astro.js", import.meta.url),
+    new URL("./bin/astro.mjs", import.meta.resolve("astro/package.json")),
   );
+  const previewEnvironment = {
+    ...process.env,
+    ...(articleFile
+      ? {
+          AUTHORING_PREVIEW_DIRECTORY: "",
+          AUTHORING_PREVIEW_FILE: articleFile,
+        }
+      : {
+          AUTHORING_PREVIEW_DIRECTORY: authoringDirectory,
+          AUTHORING_PREVIEW_FILE: "",
+        }),
+  };
   const server = spawn(
     process.execPath,
-    [astroCli, "dev", ...process.argv.slice(2)],
+    [astroCli, "dev", ...commandArguments],
     {
-      env: {
-        ...process.env,
-        AUTHORING_PREVIEW_DIRECTORY: authoringDirectory,
-      },
+      env: previewEnvironment,
       stdio: "inherit",
     },
   );
@@ -57,7 +82,7 @@ try {
   });
 } catch (error) {
   console.error(
-    error instanceof ArticleFileError
+    error instanceof Error
       ? error.message
       : "The local article preview could not be started.",
   );

@@ -4,18 +4,22 @@ import { site } from "../../../config/site";
 import ArticleLayout from "../../../layouts/ArticleLayout.astro";
 import SiteLayout from "../../../layouts/SiteLayout.astro";
 import {
+  readAuthoringArticle,
   readAuthoringDirectory,
   type AuthoringArticle,
 } from "../../../lib/authoring/article-files";
 
 export async function getStaticPaths() {
+  const authoringFile = process.env.AUTHORING_PREVIEW_FILE;
   const authoringDirectory = process.env.AUTHORING_PREVIEW_DIRECTORY;
 
-  if (!authoringDirectory) {
+  if (!authoringFile && !authoringDirectory) {
     return [];
   }
 
-  const articles = await readAuthoringDirectory(authoringDirectory);
+  const articles = authoringFile
+    ? [await readAuthoringArticle(authoringFile)]
+    : await readAuthoringDirectory(authoringDirectory!);
 
   return articles.map((article) => ({
     params: { slug: article.slug },

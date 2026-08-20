@@ -73,9 +73,16 @@ Start the local-only preview server:
 npm run article:preview
 ```
 
+To validate and preview one article, pass its Markdown file:
+
+```sh
+npm run article:preview -- authoring/articles/example-article.md
+```
+
 The command validates all private articles and prints a route for each one, such
-as `http://localhost:4321/preview/articles/example-article/`. The preview uses
-the production `ArticleLayout` and secure `ArticleBody` renderer, including the
+as `http://localhost:4321/preview/articles/example-article/`. When a file is
+provided, it validates and exposes only that article. The preview uses the
+production `ArticleLayout` and secure `ArticleBody` renderer, including the
 publication date entered in frontmatter.
 
 The preview command does not require Supabase credentials and does not write to
@@ -88,7 +95,8 @@ builds do not expose private files.
 Before publishing, complete this local review:
 
 1. Run `npm run article:validate` and resolve every reported error.
-2. Run `npm run article:preview` and open the route printed for the article.
+2. Run `npm run article:preview -- <article-file>` and open the route printed for
+   the article.
 3. Confirm the title, optional subtitle, publication date, body structure,
    links, quotations, and footnotes render as intended.
 4. Review a representative desktop width and a narrow mobile width, including
