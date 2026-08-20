@@ -8,16 +8,32 @@ import "../styles/global.css";
 import { site } from "../config/site";
 
 interface Props {
+  canonical?: boolean;
+  description?: string;
   pageTitle?: string;
+  publishedAt?: string;
+  socialType?: "article" | "website";
 }
 
-const { pageTitle } = Astro.props;
+const {
+  canonical = false,
+  description = site.description,
+  pageTitle,
+  publishedAt,
+  socialType = "website",
+} = Astro.props;
 
 let documentTitle: string = site.title;
 
 if (pageTitle) {
   documentTitle = `${pageTitle} | ${site.title}`;
 }
+
+const socialTitle = pageTitle ?? site.title;
+const canonicalUrl =
+  canonical && Astro.site
+    ? new URL(Astro.url.pathname, Astro.site).toString()
+    : undefined;
 ---
 
 <!doctype html>
@@ -25,7 +41,22 @@ if (pageTitle) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    <meta property="og:site_name" content={site.title} />
+    <meta property="og:type" content={socialType} />
+    <meta property="og:title" content={socialTitle} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    {
+      socialType === "article" && publishedAt && (
+        <meta property="article:published_time" content={publishedAt} />
+      )
+    }
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={socialTitle} />
+    <meta name="twitter:description" content={description} />
     <title>{documentTitle}</title>
     <ClientRouter />
   </head>

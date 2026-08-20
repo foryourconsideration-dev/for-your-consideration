@@ -16,6 +16,12 @@ An article that has never been published and is not publicly accessible.
 
 An article currently available to readers.
 
+## Canonical URL
+
+The preferred public address for a page, communicated to search engines to
+identify the authoritative version when multiple URLs could display the same
+content.
+
 ## Frontmatter
 
 Structured fields at the beginning of a local Markdown file, separated from the

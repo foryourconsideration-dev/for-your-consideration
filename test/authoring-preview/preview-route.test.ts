@@ -26,4 +26,9 @@ describe("built local authoring preview", () => {
       /<time[^>]*datetime="2026-08-20T09:00:00-07:00"[^>]*>August 20, 2026<\/time>/,
     );
   });
+
+  it("does not declare a private authoring preview as canonical", () => {
+    assert.doesNotMatch(preview, /rel="canonical"/);
+    assert.doesNotMatch(preview, /property="og:url"/);
+  });
 });

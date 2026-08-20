@@ -2,6 +2,7 @@
 import type { GetStaticPaths } from "astro";
 
 import ArticleBody from "../../components/ArticleBody.astro";
+import { site } from "../../config/site";
 import {
   getPublishedArticleBySlug,
   listPublishedArticles,
@@ -30,7 +31,13 @@ if (!article) {
 }
 ---
 
-<SiteLayout pageTitle={article.title}>
+<SiteLayout
+  canonical
+  description={article.subtitle ?? site.description}
+  pageTitle={article.title}
+  publishedAt={article.publishedAt}
+  socialType="article"
+>
   <ArticleLayout
     title={article.title}
     subtitle={article.subtitle}
