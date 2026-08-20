@@ -1,4 +1,5 @@
 ---
+import { ClientRouter, fade } from "astro:transitions";
 import "@fontsource-variable/libre-franklin/wght.css";
 import "@fontsource-variable/newsreader/wght.css";
 import "@fontsource-variable/newsreader/wght-italic.css";
@@ -25,11 +26,14 @@ if (pageTitle) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>{documentTitle}</title>
+    <ClientRouter />
   </head>
   <body>
-    <header class="site-header">
+    <header class="site-header" transition:persist="site-header">
       <a class="site-masthead" href="/">{site.title}</a>
     </header>
-    <slot />
+    <div transition:animate={fade({ duration: "160ms" })}>
+      <slot />
+    </div>
   </body>
 </html>

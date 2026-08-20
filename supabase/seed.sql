@@ -27,6 +27,15 @@ values
     '2025-01-01T12:00:00Z'
   ),
   (
+    '10000000-0000-4000-8000-000000000005',
+    'published-article-three',
+    'Published article three with a longer title',
+    null,
+    'Body paragraph.',
+    'published',
+    '2024-12-01T12:00:00Z'
+  ),
+  (
     '10000000-0000-4000-8000-000000000003',
     'draft-article',
     'Draft article',
