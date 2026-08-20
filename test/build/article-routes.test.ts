@@ -40,6 +40,10 @@ describe("built article routes", () => {
     );
   });
 
+  it("does not generate temporary design-review routes", () => {
+    assert.equal(existsSync("dist/design-specimen/index.html"), false);
+  });
+
   it("omits optional subtitle markup when an article has no subtitle", () => {
     const html = readFileSync(articleOutput("published-article-two"), "utf8");
 
