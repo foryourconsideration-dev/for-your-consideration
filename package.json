@@ -7,7 +7,9 @@
     "node": ">=24.16 <25"
   },
   "scripts": {
+    "article:publish": "node scripts/publish-article.mjs",
     "article:preview": "node scripts/preview-articles.mjs",
+    "article:unpublish": "node scripts/unpublish-article.mjs",
     "article:validate": "node scripts/validate-articles.mjs",
     "dev": "astro dev",
     "build": "astro build",

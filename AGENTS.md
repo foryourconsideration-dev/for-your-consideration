@@ -69,6 +69,11 @@ test/fixtures/authoring`, `npm run build:authoring-fixture`, and
 `docs/engineering/testing.md`; `docs/authoring/guide.md` is the author-facing
 workflow.
 
+For publishing changes, also reset the local database and run
+`npm run test:integration`. Publishing tests must use the local administrative
+key and a fake deployment hook only; never load `.env.publish.*` or mutate a
+hosted environment during automated verification.
+
 Documentation-only changes require:
 
 1. Review rendered Markdown.

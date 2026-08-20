@@ -20,3 +20,27 @@ While the preview server is running, open
 entered publication date and representative Markdown render correctly. The
 special fixture build is for repository testing only; ordinary local, Vercel,
 and production builds do not include this route.
+
+## Test article publishing
+
+Publishing unit tests cover argument parsing, dry-run planning, future-date
+rejection, idempotency, archiving, isolated configuration, and a fake Deploy
+Hook request:
+
+```sh
+npm test
+```
+
+With the local Supabase stack running and reset, the integration suite uses the
+local administrative key to create, update, and archive one uniquely named
+fictional test row:
+
+```sh
+npm run db:reset
+npm run test:integration
+```
+
+The next local reset removes the archived test row. The administrative publishing
+role intentionally has no delete permission. These tests do not read
+`.env.publish.*`, contact Vercel, or mutate Preview or Production. Do not run
+publishing tests with hosted credentials.
