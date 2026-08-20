@@ -42,7 +42,7 @@ tab. Footnotes render under a visible `Notes` heading with semantic references
 and backlinks.
 
 The supported authoring subset is documented in
-[the content style guide](../../design/content-style.md).
+[the content style guide](../../authoring/content-style.md).
 
 ## Consequences
 

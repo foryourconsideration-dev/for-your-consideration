@@ -1,8 +1,8 @@
 # Deployments
 
-Vercel hosts the site and builds it directly from the GitHub repository. The
-Astro application currently produces a static site in `dist`; it does not need a
-Vercel adapter or repository-specific Vercel configuration.
+Vercel hosts the site, building it directly from the GitHub repository. The
+Astro application currently produces a static site in `dist`; it does not need
+a Vercel adapter or repository-specific Vercel configuration.
 
 ## Environments
 

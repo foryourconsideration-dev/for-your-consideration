@@ -120,6 +120,12 @@ jobs:
       - name: Test generated pages
         run: npm run test:build
 
+      - name: Build the public authoring preview fixture
+        run: npm run build:authoring-fixture
+
+      - name: Test the local authoring preview
+        run: npm run test:authoring-preview
+
       - name: Verify generated database types
         run: |
           npm run db:types

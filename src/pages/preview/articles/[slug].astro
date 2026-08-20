@@ -1,0 +1,43 @@
+---
+import ArticleBody from "../../../components/ArticleBody.astro";
+import { site } from "../../../config/site";
+import ArticleLayout from "../../../layouts/ArticleLayout.astro";
+import SiteLayout from "../../../layouts/SiteLayout.astro";
+import {
+  readAuthoringDirectory,
+  type AuthoringArticle,
+} from "../../../lib/authoring/article-files";
+
+export async function getStaticPaths() {
+  const authoringDirectory = process.env.AUTHORING_PREVIEW_DIRECTORY;
+
+  if (!authoringDirectory) {
+    return [];
+  }
+
+  const articles = await readAuthoringDirectory(authoringDirectory);
+
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+interface Props {
+  article: AuthoringArticle;
+}
+
+const { article } = Astro.props;
+---
+
+<SiteLayout
+  pageTitle={`${site.copy.pages.articlePreview.documentTitlePrefix}: ${article.title}`}
+>
+  <ArticleLayout
+    title={article.title}
+    subtitle={article.subtitle}
+    publishedAt={article.publishedAt}
+  >
+    <ArticleBody slot="body" body={article.bodyMarkdown} />
+  </ArticleLayout>
+</SiteLayout>

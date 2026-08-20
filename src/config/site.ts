@@ -4,6 +4,9 @@ export const site = {
       notesHeading: "Notes",
     },
     pages: {
+      articlePreview: {
+        documentTitlePrefix: "Preview",
+      },
       home: {
         articleListHeading: "Published articles",
         emptyState: "No articles have been published yet.",

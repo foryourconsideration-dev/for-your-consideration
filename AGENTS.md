@@ -40,8 +40,10 @@ opportunistic refactors into the change.
 
 - Place application source in `src/`.
 - Use lowercase kebab-case for new documentation filenames.
+- Keep private authoring files in the ignored `authoring/articles/` directory.
+- Read `docs/authoring/guide.md` before changing authoring or preview behavior.
 - Keep private authoring files out of the repository. Their ignored location will
-  be established with the authoring workflow.
+  remain local even after an article is published.
 - Keep generated files only when their ownership and refresh command are
   documented.
 
@@ -60,6 +62,12 @@ authorization.
 
 For pages that retrieve Supabase data at build time, also run
 `npm run build:local` and `npm run test:build` against a reset local database.
+
+For authoring or local-preview changes, also run `npm run article:validate --
+test/fixtures/authoring`, `npm run build:authoring-fixture`, and
+`npm run test:authoring-preview`. Follow the contributor instructions in
+`docs/engineering/testing.md`; `docs/authoring/guide.md` is the author-facing
+workflow.
 
 Documentation-only changes require:
 

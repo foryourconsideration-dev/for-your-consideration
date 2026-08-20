@@ -7,8 +7,11 @@
     "node": ">=24.16 <25"
   },
   "scripts": {
+    "article:preview": "node scripts/preview-articles.mjs",
+    "article:validate": "node scripts/validate-articles.mjs",
     "dev": "astro dev",
     "build": "astro build",
+    "build:authoring-fixture": "node scripts/build-authoring-fixture.mjs",
     "build:local": "node scripts/build-with-local-supabase.mjs",
     "preview": "astro preview",
     "check": "astro check",
@@ -19,6 +22,7 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types --local --lang typescript > src/types/database.ts && prettier src/types/database.ts --write",
     "test": "node --test test/*.test.ts",
+    "test:authoring-preview": "node --test test/authoring-preview/*.test.ts",
     "test:build": "node --test test/build/*.test.ts",
     "test:integration": "node --test test/integration/*.test.ts",
     "format": "prettier . --write",
@@ -33,7 +37,8 @@
     "@fontsource-variable/newsreader": "5.3.0",
     "@supabase/supabase-js": "2.112.3",
     "astro": "^7.2.3",
-    "rehype-sanitize": "^6.0.0"
+    "rehype-sanitize": "^6.0.0",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
