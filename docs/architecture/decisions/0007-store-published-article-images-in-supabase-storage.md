@@ -47,24 +47,33 @@ caption and credit. References are unique within an article, and Storage paths
 are globally unique. An article may designate one of its own image rows as its
 lead image; the database enforces that ownership relationship.
 
-Use article-local references as the future authoring boundary. A lead-image
+Use article-local references as the authoring boundary. A lead-image
 frontmatter value and an inline Markdown construct may both refer to a readable
 identifier such as `harbor-at-dawn`. The publishing and rendering layers will
 resolve that identifier within the current article. They must not place database
 UUIDs, environment-specific public URLs, or content-digest paths in authored
-Markdown. The intended authoring forms are `lead_image: harbor-at-dawn` in
-frontmatter and `::image{ref="harbor-at-dawn"}` in Markdown; their parsing and
-validation remain outside this decision's implementation scope.
+Markdown. The private authoring manifest uses an `images` list whose entries
+contain `ref`, `source`, `alt`, and optional `caption` and `credit` values.
+`source` is relative to the private article file; `ref` is the stable identity.
+`lead_image: harbor-at-dawn` selects an entry from that list. A future inline
+construct may use `::image{ref="harbor-at-dawn"}` to select the same entry.
 
-Accept JPEG, PNG, and WebP files up to 5 MiB. Future publishing behavior will
-reject animated or malformed files, determine dimensions from the file rather
+Accept JPEG, PNG, and WebP files up to 5 MiB. Publishing rejects animated or
+malformed files, determines dimensions from the file rather
 than trusting authored values, and upload each file under a path containing its
 article slug and SHA-256 content digest.
 
-This decision establishes the database, Storage, access-control, and reference
-contracts only. Markdown syntax and parsing, local-file validation, uploads,
-publishing orchestration, reference resolution, reader-facing rendering, and
-asset cleanup require separate changes.
+Publishing resolves the manifest separately in each environment. It creates an
+unpublished article row for a new slug, uploads each validated file, and upserts
+metadata by `(article_id, reference)`. Only after all required uploads and
+metadata writes succeed does it set `lead_image_id` to the resolved row owned by
+that article and publish the article. An existing published article therefore
+keeps its last valid relationship if an image write fails. Publishing never
+deletes superseded metadata rows or Storage objects.
+
+This decision establishes the database, Storage, access-control, authoring, and
+publishing reference contracts. Inline Markdown parsing, reader-facing
+rendering, and asset cleanup remain separate changes.
 
 ## Consequences
 

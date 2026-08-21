@@ -42,6 +42,7 @@
     "@supabase/supabase-js": "2.112.3",
     "astro": "^7.2.3",
     "rehype-sanitize": "^6.0.0",
+    "sharp": "0.35.3",
     "zod": "4.4.3"
   },
   "devDependencies": {

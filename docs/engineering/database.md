@@ -97,7 +97,7 @@ privileges; it does not receive `delete`.
 
 Published article images use the public `article-images` Storage bucket. Public
 access applies to downloads only. Anonymous clients have no upload, update, or
-delete grant or policy; future image-publishing behavior will perform writes
+delete grant or policy; image publishing performs writes
 with the same environment-specific secret key used for article mutations.
 
 The bucket accepts JPEG, PNG, and WebP objects up to 5 MiB. Object paths contain
