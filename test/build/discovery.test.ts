@@ -34,6 +34,7 @@ describe("built site discovery files", () => {
     assert.doesNotMatch(sitemap, /\/404\//);
     assert.doesNotMatch(sitemap, /\/preview\//);
     assert.doesNotMatch(sitemap, /\/robots\.txt/);
+    assert.doesNotMatch(sitemap, /\/rss\.xml/);
     assert.doesNotMatch(sitemap, /draft-article/);
     assert.doesNotMatch(sitemap, /archived-article/);
   });
