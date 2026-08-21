@@ -27,6 +27,11 @@ content.
 Structured fields at the beginning of a local Markdown file, separated from the
 article body by `---` delimiters.
 
+## RSS feed
+
+A machine-readable subscription file that lets feed readers receive newly
+published articles without repeatedly checking the website.
+
 ## Sitemap
 
 A machine-readable file listing a website's public pages so search engines can

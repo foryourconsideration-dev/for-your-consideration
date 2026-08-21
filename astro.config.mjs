@@ -10,6 +10,7 @@ export default defineConfig({
         return (
           pathname !== "/404/" &&
           pathname !== "/robots.txt" &&
+          pathname !== "/rss.xml" &&
           !pathname.startsWith("/preview/")
         );
       },
