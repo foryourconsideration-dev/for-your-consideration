@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
@@ -15,8 +16,23 @@ describe("built local authoring preview", () => {
       /class="article-subtitle"[^>]*>A public test fixture<\/p>/,
     );
     assert.match(preview, /<em>emphasis<\/em>/);
+    assert.match(preview, /<figure class="article-lead-image"[^>]*>/);
+    assert.match(preview, /src="\/preview\/article-images\/fixture-article"/);
+    assert.match(
+      preview,
+      /alt="Abstract oxblood quadrilateral on a warm gray background\."/,
+    );
     assert.match(preview, /<h2[^>]*>Fixture heading<\/h2>/);
     assert.match(preview, />Notes<\/h2>/);
+  });
+
+  it("emits only the selected validated private lead image", () => {
+    const image = readFileSync("dist/preview/article-images/fixture-article");
+
+    assert.equal(
+      createHash("sha256").update(image).digest("hex"),
+      "addc70685e351486c02902a3b9b5914a5154209bd22ac9daf64f6da42c069402",
+    );
   });
 
   it("displays the publication timestamp entered by the author", () => {

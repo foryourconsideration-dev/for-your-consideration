@@ -2,6 +2,8 @@ begin;
 
 select plan(12);
 
+update public.articles set lead_image_id = null;
+delete from public.article_images;
 delete from public.articles;
 
 select lives_ok(

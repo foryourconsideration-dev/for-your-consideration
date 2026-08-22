@@ -121,6 +121,7 @@ file_size_limit = "50MiB"
 public = true
 file_size_limit = "5MiB"
 allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+objects_path = "./storage/article-images"
 
 # Allow connections via S3 compatible clients
 [storage.s3_protocol]

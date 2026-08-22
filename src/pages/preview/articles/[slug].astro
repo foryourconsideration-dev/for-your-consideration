@@ -3,23 +3,14 @@ import ArticleBody from "../../../components/ArticleBody.astro";
 import { site } from "../../../config/site";
 import ArticleLayout from "../../../layouts/ArticleLayout.astro";
 import SiteLayout from "../../../layouts/SiteLayout.astro";
+import type { AuthoringArticle } from "../../../lib/authoring/article-files";
 import {
-  readAuthoringArticle,
-  readAuthoringDirectory,
-  type AuthoringArticle,
-} from "../../../lib/authoring/article-files";
+  readAuthoringPreviewArticles,
+  resolveAuthoringLeadImage,
+} from "../../../lib/authoring/preview-articles";
 
 export async function getStaticPaths() {
-  const authoringFile = process.env.AUTHORING_PREVIEW_FILE;
-  const authoringDirectory = process.env.AUTHORING_PREVIEW_DIRECTORY;
-
-  if (!authoringFile && !authoringDirectory) {
-    return [];
-  }
-
-  const articles = authoringFile
-    ? [await readAuthoringArticle(authoringFile)]
-    : await readAuthoringDirectory(authoringDirectory!);
+  const articles = await readAuthoringPreviewArticles();
 
   return articles.map((article) => ({
     params: { slug: article.slug },
@@ -32,12 +23,19 @@ interface Props {
 }
 
 const { article } = Astro.props;
+const leadImage = resolveAuthoringLeadImage(article);
 ---
 
 <SiteLayout
   pageTitle={`${site.copy.pages.articlePreview.documentTitlePrefix}: ${article.title}`}
 >
   <ArticleLayout
+    leadImage={leadImage
+      ? {
+          ...leadImage,
+          src: `/preview/article-images/${article.slug}`,
+        }
+      : null}
     title={article.title}
     subtitle={article.subtitle}
     publishedAt={article.publishedAt}

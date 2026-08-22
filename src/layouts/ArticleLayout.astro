@@ -1,13 +1,24 @@
 ---
 import { formatPublicationDate } from "../lib/dates/format-publication-date";
+import ArticleLeadImage from "../components/ArticleLeadImage.astro";
+
+interface LeadImage {
+  alt: string;
+  caption: string | null;
+  credit: string | null;
+  height: number;
+  src: string;
+  width: number;
+}
 
 interface Props {
+  leadImage?: LeadImage | null;
   publishedAt: string;
   subtitle?: string | null;
   title: string;
 }
 
-const { publishedAt, subtitle, title } = Astro.props;
+const { leadImage, publishedAt, subtitle, title } = Astro.props;
 ---
 
 <main class="page-container article-page">
@@ -19,6 +30,8 @@ const { publishedAt, subtitle, title } = Astro.props;
       </p>
       {subtitle && <p class="article-subtitle">{subtitle}</p>}
     </header>
+
+    {leadImage && <ArticleLeadImage {...leadImage} />}
 
     <div class="article-body">
       <slot name="body" />
