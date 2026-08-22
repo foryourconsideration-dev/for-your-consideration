@@ -1,5 +1,6 @@
 ---
 import { ClientRouter, fade } from "astro:transitions";
+import Analytics from "@vercel/analytics/astro";
 import "@fontsource-variable/libre-franklin/wght.css";
 import "@fontsource-variable/newsreader/wght.css";
 import "@fontsource-variable/newsreader/wght-italic.css";
@@ -66,6 +67,7 @@ const canonicalUrl =
     <meta name="twitter:description" content={description} />
     <title>{documentTitle}</title>
     <ClientRouter />
+    <Analytics />
   </head>
   <body>
     <header class="site-header" transition:persist="site-header">

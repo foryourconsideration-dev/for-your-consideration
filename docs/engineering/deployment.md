@@ -33,6 +33,16 @@ Vercel uses the repository's package lock, runs the Astro build, and serves the
 generated `dist` directory. Keep framework defaults unless the application gains
 a concrete requirement they do not support.
 
+## Web Analytics
+
+The shared site layout includes Vercel Web Analytics through the official
+`@vercel/analytics` package. It provides anonymous, cookie-free aggregate
+page-view analytics and requires no environment variables or Vercel adapter.
+
+Enable Web Analytics separately in the Vercel project before deploying this
+integration. To stop collection, remove the integration and disable Web
+Analytics in the Vercel dashboard.
+
 ## Environment variables and secrets
 
 Static builds require two server-only values:
@@ -85,3 +95,5 @@ rollback.
 - [Deployment protection](https://vercel.com/kb/guide/locking-down-deployments)
 - [Performing an Instant Rollback](https://vercel.com/docs/instant-rollback)
 - [Set up and use Deploy Hooks](https://vercel.com/kb/guide/set-up-and-use-deploy-hooks-with-vercel-and-headless-cms)
+- [Get started with Vercel Web Analytics](https://vercel.com/docs/analytics/quickstart)
+- [Vercel Web Analytics privacy and compliance](https://vercel.com/docs/analytics/privacy-policy)
