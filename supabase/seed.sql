@@ -53,3 +53,30 @@ values
     'archived',
     '2024-12-01T12:00:00Z'
   );
+
+insert into public.article_images (
+  id,
+  article_id,
+  reference,
+  storage_path,
+  alt,
+  caption,
+  credit,
+  width,
+  height
+)
+values (
+  '20000000-0000-4000-8000-000000000001',
+  '10000000-0000-4000-8000-000000000001',
+  'lead',
+  'published-article-one/addc70685e351486c02902a3b9b5914a5154209bd22ac9daf64f6da42c069402.png',
+  'Abstract oxblood quadrilateral on a warm gray background.',
+  'A fictional image used to verify the article image workflow.',
+  'Test fixture',
+  1200,
+  675
+);
+
+update public.articles
+set lead_image_id = '20000000-0000-4000-8000-000000000001'
+where id = '10000000-0000-4000-8000-000000000001';

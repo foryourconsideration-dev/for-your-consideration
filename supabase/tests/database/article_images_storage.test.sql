@@ -337,7 +337,7 @@ set local role anon;
 
 select results_eq(
   $$ select reference from public.article_images order by reference $$,
-  $$ values ('harbor-at-dawn'::text), ('harbor-at-night'::text) $$,
+  $$ values ('harbor-at-dawn'::text), ('harbor-at-night'::text), ('lead'::text) $$,
   'anonymous readers see metadata only for currently published articles'
 );
 

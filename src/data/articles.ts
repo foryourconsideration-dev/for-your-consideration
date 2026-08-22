@@ -1,12 +1,15 @@
 import type { PostgrestError, SupabaseClient } from "@supabase/supabase-js";
 
+import { ARTICLE_IMAGE_BUCKET } from "../lib/article-images.ts";
 import { getServerSupabaseClient } from "../lib/supabase/server.ts";
 import type { Database, Tables } from "../types/database.ts";
 
 const ARTICLE_SUMMARY_COLUMNS =
   "id, slug, title, subtitle, published_at" as const;
 const ARTICLE_COLUMNS =
-  "id, slug, title, subtitle, body_markdown, published_at" as const;
+  "id, slug, title, subtitle, body_markdown, published_at, lead_image_id" as const;
+const ARTICLE_IMAGE_COLUMNS =
+  "storage_path, alt, caption, credit, width, height" as const;
 
 type ArticleRow = Tables<"articles">;
 type ArticleSummaryRow = Pick<
@@ -15,8 +18,27 @@ type ArticleSummaryRow = Pick<
 >;
 type PublishedArticleRow = Pick<
   ArticleRow,
-  "id" | "slug" | "title" | "subtitle" | "body_markdown" | "published_at"
+  | "id"
+  | "slug"
+  | "title"
+  | "subtitle"
+  | "body_markdown"
+  | "published_at"
+  | "lead_image_id"
 >;
+type ArticleImageRow = Pick<
+  Tables<"article_images">,
+  "storage_path" | "alt" | "caption" | "credit" | "width" | "height"
+>;
+
+export interface PublishedLeadImage {
+  alt: string;
+  caption: string | null;
+  credit: string | null;
+  height: number;
+  src: string;
+  width: number;
+}
 
 export interface PublishedArticleSummary {
   id: string;
@@ -28,6 +50,7 @@ export interface PublishedArticleSummary {
 
 export interface PublishedArticle extends PublishedArticleSummary {
   bodyMarkdown: string;
+  leadImage: PublishedLeadImage | null;
 }
 
 export class ArticleDataError extends Error {
@@ -67,10 +90,57 @@ function mapSummary(
   };
 }
 
-function mapArticle(row: PublishedArticleRow): PublishedArticle {
+function mapArticle(
+  row: PublishedArticleRow,
+  leadImage: PublishedLeadImage | null,
+): PublishedArticle {
   return {
     ...mapSummary(row, "retrieve"),
     bodyMarkdown: row.body_markdown,
+    leadImage,
+  };
+}
+
+async function retrieveLeadImage(
+  article: PublishedArticleRow,
+  supabase: SupabaseClient<Database>,
+): Promise<PublishedLeadImage | null> {
+  if (!article.lead_image_id) {
+    return null;
+  }
+
+  const { data, error } = await supabase
+    .from("article_images")
+    .select(ARTICLE_IMAGE_COLUMNS)
+    .eq("id", article.lead_image_id)
+    .eq("article_id", article.id)
+    .maybeSingle();
+
+  if (error) {
+    throw queryError(
+      "Unable to retrieve the published article lead image.",
+      error,
+    );
+  }
+
+  if (!data) {
+    throw new ArticleDataError(
+      "Unable to retrieve the published article lead image: its metadata is unavailable.",
+    );
+  }
+
+  const image = data as ArticleImageRow;
+  const { publicUrl } = supabase.storage
+    .from(ARTICLE_IMAGE_BUCKET)
+    .getPublicUrl(image.storage_path).data;
+
+  return {
+    alt: image.alt,
+    caption: image.caption,
+    credit: image.credit,
+    height: image.height,
+    src: publicUrl,
+    width: image.width,
   };
 }
 
@@ -113,7 +183,11 @@ export function createArticleRepository(
         throw queryError("Unable to retrieve the published article.", error);
       }
 
-      return data ? mapArticle(data) : null;
+      if (!data) {
+        return null;
+      }
+
+      return mapArticle(data, await retrieveLeadImage(data, supabase));
     },
   };
 }

@@ -17,9 +17,10 @@ npm run preview
 
 While the preview server is running, open
 `http://localhost:4321/preview/articles/fixture-article/`. Confirm that the
-entered publication date and representative Markdown render correctly. The
-special fixture build is for repository testing only; ordinary local, Vercel,
-and production builds do not include this route.
+entered publication date, selected lead image, image metadata, and representative
+Markdown render correctly. The special fixture build is for repository testing
+only; ordinary local, Vercel, and production builds do not include the preview
+page or its local image route.
 
 ## Test article publishing
 

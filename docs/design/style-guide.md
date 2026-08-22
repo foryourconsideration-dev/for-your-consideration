@@ -58,6 +58,18 @@ widths, but make only the title the link so its interactive target is explicit.
 Do not display body excerpts or paginate the index until the amount of published
 content creates a demonstrated need.
 
+## Article images
+
+Render an optional lead image between the article header and body. Preserve its
+intrinsic aspect ratio and dimensions, shrink it to fit the reading container,
+and do not enlarge a smaller source file. Captions and credits use the muted
+editorial treatment beneath the image; omit the caption region entirely when
+neither is present.
+
+Alternative text is required authoring metadata and must reach the native image
+element unchanged. The image must not become a link or interactive control by
+default.
+
 ## Links and focus
 
 Inline text links are underlined without relying on color alone. Linked article

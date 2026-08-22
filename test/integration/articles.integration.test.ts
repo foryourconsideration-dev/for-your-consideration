@@ -87,6 +87,26 @@ describe("article repository with local Supabase", () => {
 
     assert.equal(article?.title, "Published article one");
     assert.match(article?.bodyMarkdown ?? "", /Section heading/);
+    assert.deepEqual(
+      article?.leadImage && {
+        alt: article.leadImage.alt,
+        caption: article.leadImage.caption,
+        credit: article.leadImage.credit,
+        height: article.leadImage.height,
+        width: article.leadImage.width,
+      },
+      {
+        alt: "Abstract oxblood quadrilateral on a warm gray background.",
+        caption: "A fictional image used to verify the article image workflow.",
+        credit: "Test fixture",
+        height: 675,
+        width: 1200,
+      },
+    );
+    assert.match(
+      article?.leadImage?.src ?? "",
+      /\/storage\/v1\/object\/public\/article-images\/published-article-one\/addc70685e351486c02902a3b9b5914a5154209bd22ac9daf64f6da42c069402\.png$/,
+    );
   });
 
   it("cannot retrieve draft or archived slugs", async () => {

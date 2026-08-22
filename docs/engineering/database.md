@@ -115,6 +115,9 @@ constructing Supabase queries inside pages. It provides a newest-first published
 article list and a published-article lookup by slug. An empty publication returns
 an empty list, an unknown slug returns `null`, and database failures throw an
 `ArticleDataError` so callers do not confuse an outage with missing content.
+When a published article selects a lead image, the repository resolves
+`articles.lead_image_id` through `article_images` and constructs the public
+Storage URL during the build.
 
 The server-only client in `src/lib/supabase/server.ts` requires
 `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`. Copy `.env.example` to

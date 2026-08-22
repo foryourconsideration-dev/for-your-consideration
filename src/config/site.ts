@@ -4,6 +4,7 @@ export const site = {
   copy: {
     article: {
       footnoteBacklink: "↩︎",
+      imageCreditLabel: "Image credit",
       notesHeading: "Notes",
     },
     pages: {

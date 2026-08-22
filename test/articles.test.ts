@@ -62,17 +62,35 @@ class QueryDouble implements PromiseLike<QueryResult> {
   }
 }
 
-function clientWith(result: QueryResult) {
+function clientWith(result: QueryResult, imageResult?: QueryResult) {
   const query = new QueryDouble(result);
+  const imageQuery = new QueryDouble(
+    imageResult ?? { data: null, error: null },
+  );
   const tables: string[] = [];
+  const storageBuckets: string[] = [];
   const client = {
     from(table: string) {
       tables.push(table);
-      return query;
+      return table === "article_images" ? imageQuery : query;
+    },
+    storage: {
+      from(bucket: string) {
+        storageBuckets.push(bucket);
+        return {
+          getPublicUrl(path: string) {
+            return {
+              data: {
+                publicUrl: `https://example.supabase.co/storage/v1/object/public/${bucket}/${path}`,
+              },
+            };
+          },
+        };
+      },
     },
   } as unknown as SupabaseClient<Database>;
 
-  return { client, query, tables };
+  return { client, imageQuery, query, storageBuckets, tables };
 }
 
 const now = () => new Date("2026-08-18T12:00:00.000Z");
@@ -147,9 +165,85 @@ describe("article repository", () => {
   });
 
   it("retrieves and maps one published article by slug", async () => {
-    const { client, query } = clientWith({
+    const { client, imageQuery, query, storageBuckets, tables } = clientWith(
+      {
+        data: {
+          id: "article-1",
+          lead_image_id: "image-1",
+          slug: "article-slug",
+          title: "Article title",
+          subtitle: null,
+          body_markdown: "Body paragraph.",
+          published_at: "2026-08-17T12:00:00.000Z",
+        },
+        error: null,
+      },
+      {
+        data: {
+          alt: "A quiet landscape.",
+          caption: "A fictional caption.",
+          credit: "Fixture photographer",
+          height: 675,
+          storage_path: "article-slug/abc123.png",
+          width: 1200,
+        },
+        error: null,
+      },
+    );
+
+    const article = await createArticleRepository(client, {
+      now,
+    }).getPublishedArticleBySlug("article-slug");
+
+    assert.deepEqual(article, {
+      id: "article-1",
+      leadImage: {
+        alt: "A quiet landscape.",
+        caption: "A fictional caption.",
+        credit: "Fixture photographer",
+        height: 675,
+        src: "https://example.supabase.co/storage/v1/object/public/article-images/article-slug/abc123.png",
+        width: 1200,
+      },
+      slug: "article-slug",
+      title: "Article title",
+      subtitle: null,
+      bodyMarkdown: "Body paragraph.",
+      publishedAt: "2026-08-17T12:00:00.000Z",
+    });
+    assert.deepEqual(tables, ["articles", "article_images"]);
+    assert.deepEqual(storageBuckets, ["article-images"]);
+    assert.deepEqual(query.calls[0], {
+      method: "select",
+      arguments: [
+        "id, slug, title, subtitle, body_markdown, published_at, lead_image_id",
+      ],
+    });
+    assert.deepEqual(query.calls.slice(1), [
+      { method: "eq", arguments: ["status", "published"] },
+      {
+        method: "lte",
+        arguments: ["published_at", "2026-08-18T12:00:00.000Z"],
+      },
+      { method: "eq", arguments: ["slug", "article-slug"] },
+      { method: "maybeSingle", arguments: [] },
+    ]);
+    assert.deepEqual(imageQuery.calls, [
+      {
+        method: "select",
+        arguments: ["storage_path, alt, caption, credit, width, height"],
+      },
+      { method: "eq", arguments: ["id", "image-1"] },
+      { method: "eq", arguments: ["article_id", "article-1"] },
+      { method: "maybeSingle", arguments: [] },
+    ]);
+  });
+
+  it("omits lead-image resolution when the article has no lead image", async () => {
+    const { client, imageQuery, tables } = clientWith({
       data: {
         id: "article-1",
+        lead_image_id: null,
         slug: "article-slug",
         title: "Article title",
         subtitle: null,
@@ -163,23 +257,34 @@ describe("article repository", () => {
       now,
     }).getPublishedArticleBySlug("article-slug");
 
-    assert.deepEqual(article, {
-      id: "article-1",
-      slug: "article-slug",
-      title: "Article title",
-      subtitle: null,
-      bodyMarkdown: "Body paragraph.",
-      publishedAt: "2026-08-17T12:00:00.000Z",
-    });
-    assert.deepEqual(query.calls.slice(1), [
-      { method: "eq", arguments: ["status", "published"] },
+    assert.equal(article?.leadImage, null);
+    assert.deepEqual(tables, ["articles"]);
+    assert.deepEqual(imageQuery.calls, []);
+  });
+
+  it("rejects an unavailable lead-image relationship", async () => {
+    const { client } = clientWith(
       {
-        method: "lte",
-        arguments: ["published_at", "2026-08-18T12:00:00.000Z"],
+        data: {
+          id: "article-1",
+          lead_image_id: "image-1",
+          slug: "article-slug",
+          title: "Article title",
+          subtitle: null,
+          body_markdown: "Body paragraph.",
+          published_at: "2026-08-17T12:00:00.000Z",
+        },
+        error: null,
       },
-      { method: "eq", arguments: ["slug", "article-slug"] },
-      { method: "maybeSingle", arguments: [] },
-    ]);
+      { data: null, error: null },
+    );
+
+    await assert.rejects(
+      createArticleRepository(client, { now }).getPublishedArticleBySlug(
+        "article-slug",
+      ),
+      /lead image: its metadata is unavailable/,
+    );
   });
 
   it("returns null when a published slug is not found", async () => {

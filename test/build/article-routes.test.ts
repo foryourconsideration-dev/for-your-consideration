@@ -22,6 +22,16 @@ describe("built article routes", () => {
       html,
       /<h2 id="user-content-section-heading">Section heading<\/h2>/,
     );
+    assert.match(html, /<figure class="article-lead-image"[^>]*>/);
+    assert.match(
+      html,
+      /<img[^>]+alt="Abstract oxblood quadrilateral on a warm gray background\."[^>]+width="1200"[^>]+height="675"/,
+    );
+    assert.match(
+      html,
+      /A fictional image used to verify the article image workflow\./,
+    );
+    assert.match(html, /Image credit:\s*Test fixture/);
   });
 
   it("generates routes only for available articles", () => {
@@ -38,6 +48,10 @@ describe("built article routes", () => {
       existsSync("dist/preview/articles/fixture-article/index.html"),
       false,
     );
+    assert.equal(
+      existsSync("dist/preview/article-images/fixture-article"),
+      false,
+    );
   });
 
   it("does not generate temporary design-review routes", () => {
@@ -48,6 +62,12 @@ describe("built article routes", () => {
     const html = readFileSync(articleOutput("published-article-two"), "utf8");
 
     assert.doesNotMatch(html, /class="article-subtitle"/);
+  });
+
+  it("omits lead-image markup when an article has no lead image", () => {
+    const html = readFileSync(articleOutput("published-article-two"), "utf8");
+
+    assert.doesNotMatch(html, /class="article-lead-image"/);
   });
 
   it("builds a not-found page with a homepage link", () => {

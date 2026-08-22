@@ -133,7 +133,7 @@ Before publishing, complete this local review:
 2. Run `npm run article:preview -- <article-file>` and open the route printed for
    the article.
 3. Confirm the title, optional subtitle, publication date, body structure,
-   links, quotations, and footnotes render as intended.
+   links, quotations, footnotes, and optional lead image render as intended.
 4. Review a representative desktop width and a narrow mobile width, including
    keyboard navigation and 200% zoom.
 

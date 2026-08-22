@@ -1,0 +1,59 @@
+---
+import { site } from "../config/site";
+
+interface Props {
+  alt: string;
+  caption?: string | null;
+  credit?: string | null;
+  height: number;
+  src: string;
+  width: number;
+}
+
+const { alt, caption, credit, height, src, width } = Astro.props;
+---
+
+<figure class="article-lead-image">
+  <img src={src} alt={alt} width={width} height={height} decoding="async" />
+  {
+    (caption || credit) && (
+      <figcaption>
+        {caption && <span>{caption}</span>}
+        {credit && (
+          <span class="article-image-credit">
+            {site.copy.article.imageCreditLabel}: {credit}
+          </span>
+        )}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .article-lead-image {
+    margin: 0 0 clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+  }
+
+  figcaption {
+    margin-block-start: 0.65rem;
+    color: var(--color-muted);
+    font-size: 0.8em;
+    line-height: 1.45;
+  }
+
+  figcaption span {
+    display: block;
+  }
+
+  .article-image-credit {
+    font-family: var(--font-interface);
+    font-size: 0.82em;
+  }
+</style>
