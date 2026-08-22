@@ -32,6 +32,13 @@ slug: example-article
 title: Example article
 subtitle: An optional subtitle
 publishedAt: "2026-08-20T09:00:00-07:00"
+lead_image: harbor-at-dawn
+images:
+  - ref: harbor-at-dawn
+    source: ./example-article/lead.jpg
+    alt: A concise description of the image.
+    caption: An optional caption.
+    credit: An optional image credit.
 ---
 
 The article body starts here.
@@ -45,6 +52,8 @@ The YAML frontmatter accepts exactly these fields:
 | `title`       | Yes      | 1–200 characters with no surrounding whitespace         |
 | `subtitle`    | No       | 1–300 characters with no surrounding whitespace         |
 | `publishedAt` | Yes      | Quoted ISO 8601 timestamp including a timezone          |
+| `lead_image`  | No       | Reference of the image selected as the lead image       |
+| `images`      | No       | Local image sources and metadata by stable reference    |
 
 The body must contain non-whitespace Markdown and follow the
 [content style guide](content-style.md). Publication status, author, and
@@ -55,6 +64,22 @@ preview. Entering it does not upload, schedule, or publish the article. The
 publishing command requires an explicit author action and rejects publication
 before this timestamp. Keep the timestamp quoted so YAML preserves the explicit
 timezone for validation.
+
+### Add a lead image
+
+Keep image files beside the private article in an article-specific directory,
+then define each file in `images` with a stable lowercase kebab-case `ref`.
+Select one defined reference with `lead_image`. The reference remains stable
+when the source file changes and resolves independently in Preview and
+Production. `source` must be a relative path that remains inside the directory
+containing the Markdown file. Absolute paths and `..` traversal are rejected.
+
+Use a JPEG, PNG, or WebP file no larger than 5 MiB. Animated images are not
+supported. `alt` is required and should describe the image's meaningful visual
+content; do not repeat the caption. `caption` and `credit` are optional and
+should be omitted when they do not apply. Validation reads the real file,
+confirms its format and size, and records its intrinsic dimensions for stable
+reader-page layout.
 
 ## Validate
 
@@ -71,9 +96,9 @@ npm run article:validate -- authoring/articles/example-article.md
 ```
 
 Validation checks the frontmatter, database-compatible field limits, duplicate
-slugs within a directory, and nonempty body content. Errors identify the local
-filename and invalid field without printing the article body or an absolute
-private path.
+slugs within a directory, nonempty body content, and optional lead-image file.
+Errors identify the local filename and invalid field without printing the
+article body or an absolute private path.
 
 ## Preview
 
@@ -138,6 +163,13 @@ The command:
 6. Accepts `continue` or `stop` after review, then closes the local server.
 7. Reports the Production change and accepts either `publish <slug>` or `stop`.
 8. Writes the confirmed article to Production and requests a Vercel deployment.
+
+When an article defines images, each confirmed environment uploads its own
+content-addressed copies and upserts metadata by the article and stable
+reference. Only after those writes succeed does publishing select the owned
+lead-image row and publish the article. Images never enter Git or the other
+environment. Unchanged articles and images are not rewritten, and superseded
+objects are not deleted.
 
 Stopping before the Preview upload changes neither environment. Stopping after
 the Preview upload leaves the reviewed Preview row intact but does not change

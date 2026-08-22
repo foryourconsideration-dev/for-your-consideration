@@ -10,6 +10,7 @@ import {
 } from "../src/lib/publishing/arguments.ts";
 import {
   type ArticlePublishingRepository,
+  type ArticlePublishingRecord,
   ArticlePublishingError,
   planPublication,
   planUnpublication,
@@ -34,6 +35,8 @@ type ArticleRow = Database["public"]["Tables"]["articles"]["Row"];
 
 const article = {
   bodyMarkdown: "Article body.",
+  images: [],
+  leadImageReference: null,
   publishedAt: "2026-08-19T12:00:00Z",
   slug: "example-article",
   subtitle: null,
@@ -54,6 +57,10 @@ function row(overrides: Partial<ArticleRow> = {}): ArticleRow {
     updated_at: "2026-08-19T12:00:00Z",
     ...overrides,
   };
+}
+
+function record(overrides: Partial<ArticleRow> = {}) {
+  return { ...row(overrides), images: [] };
 }
 
 describe("publishing arguments", () => {
@@ -113,7 +120,7 @@ describe("publishing arguments", () => {
 
 describe("guided publication", () => {
   function repository(
-    current: ArticleRow | null,
+    current: ArticlePublishingRecord | null,
     writes: string[],
   ): ArticlePublishingRepository {
     return {
@@ -129,8 +136,8 @@ describe("guided publication", () => {
 
   function dependencies(options: {
     continueDecisions?: boolean[];
-    previewCurrent?: ArticleRow | null;
-    productionCurrent?: ArticleRow | null;
+    previewCurrent?: ArticlePublishingRecord | null;
+    productionCurrent?: ArticlePublishingRecord | null;
     publishDecision?: boolean;
     reviewDecision?: boolean;
   }) {
@@ -222,8 +229,8 @@ describe("guided publication", () => {
 
   it("does not redeploy when Production already matches", async () => {
     const workflow = dependencies({
-      previewCurrent: row(),
-      productionCurrent: row(),
+      previewCurrent: record(),
+      productionCurrent: record(),
     });
 
     assert.equal(
@@ -241,9 +248,9 @@ describe("publication planning", () => {
 
   it("distinguishes creates, updates, and idempotent reruns", () => {
     assert.equal(planPublication(null, article, now), "create");
-    assert.equal(planPublication(row(), article, now), "unchanged");
+    assert.equal(planPublication(record(), article, now), "unchanged");
     assert.equal(
-      planPublication(row({ title: "Previous title" }), article, now),
+      planPublication(record({ title: "Previous title" }), article, now),
       "update",
     );
   });

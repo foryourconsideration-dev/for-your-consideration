@@ -9,6 +9,7 @@ import { describe, it } from "node:test";
 const previewScript = resolve("scripts/preview-articles.mjs");
 const fixtureDirectory = resolve("test/fixtures/authoring");
 const fixtureArticle = resolve(fixtureDirectory, "fixture-article.md");
+const fixtureImage = resolve(fixtureDirectory, "fixture-article", "lead.png");
 
 function runPreview(arguments_: string[], cwd = process.cwd()) {
   return spawnSync(process.execPath, [previewScript, ...arguments_, "--help"], {
@@ -30,6 +31,12 @@ describe("article preview command", () => {
       fixtureArticle,
       join(temporaryAuthoringDirectory, "fixture-article.md"),
     );
+    const temporaryImageDirectory = join(
+      temporaryAuthoringDirectory,
+      "fixture-article",
+    );
+    mkdirSync(temporaryImageDirectory);
+    copyFileSync(fixtureImage, join(temporaryImageDirectory, "lead.png"));
 
     const result = runPreview([], temporaryRoot);
     rmSync(temporaryRoot, { force: true, recursive: true });
