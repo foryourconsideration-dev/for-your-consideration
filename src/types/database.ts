@@ -34,11 +34,62 @@ export type Database = {
   };
   public: {
     Tables: {
+      article_images: {
+        Row: {
+          alt: string;
+          article_id: string;
+          caption: string | null;
+          created_at: string;
+          credit: string | null;
+          height: number;
+          id: string;
+          reference: string;
+          storage_path: string;
+          updated_at: string;
+          width: number;
+        };
+        Insert: {
+          alt: string;
+          article_id: string;
+          caption?: string | null;
+          created_at?: string;
+          credit?: string | null;
+          height: number;
+          id?: string;
+          reference: string;
+          storage_path: string;
+          updated_at?: string;
+          width: number;
+        };
+        Update: {
+          alt?: string;
+          article_id?: string;
+          caption?: string | null;
+          created_at?: string;
+          credit?: string | null;
+          height?: number;
+          id?: string;
+          reference?: string;
+          storage_path?: string;
+          updated_at?: string;
+          width?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "article_images_article_id_fkey";
+            columns: ["article_id"];
+            isOneToOne: false;
+            referencedRelation: "articles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       articles: {
         Row: {
           body_markdown: string;
           created_at: string;
           id: string;
+          lead_image_id: string | null;
           published_at: string | null;
           slug: string;
           status: string;
@@ -50,6 +101,7 @@ export type Database = {
           body_markdown: string;
           created_at?: string;
           id?: string;
+          lead_image_id?: string | null;
           published_at?: string | null;
           slug: string;
           status?: string;
@@ -61,6 +113,7 @@ export type Database = {
           body_markdown?: string;
           created_at?: string;
           id?: string;
+          lead_image_id?: string | null;
           published_at?: string | null;
           slug?: string;
           status?: string;
@@ -68,7 +121,15 @@ export type Database = {
           title?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "articles_lead_image_belongs_to_article_fkey";
+            columns: ["lead_image_id", "id"];
+            isOneToOne: false;
+            referencedRelation: "article_images";
+            referencedColumns: ["id", "article_id"];
+          },
+        ];
       };
     };
     Views: {

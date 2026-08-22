@@ -14,7 +14,7 @@ select is(
     where table_schema = 'public'
       and table_name = 'articles'
   ),
-  9,
+  10,
   'articles table has the approved columns'
 );
 

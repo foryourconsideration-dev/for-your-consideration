@@ -45,6 +45,7 @@ function row(overrides: Partial<ArticleRow> = {}): ArticleRow {
     body_markdown: article.bodyMarkdown,
     created_at: "2026-08-19T12:00:00Z",
     id: "10000000-0000-4000-8000-000000000099",
+    lead_image_id: null,
     published_at: article.publishedAt,
     slug: article.slug,
     status: "published",

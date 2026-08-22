@@ -67,6 +67,13 @@ publication lifecycle:
 | `created_at`    | Record creation time.                                |
 | `updated_at`    | Automatically maintained modification time.          |
 
+An article can have multiple images. Each image is represented by a row in
+`article_images` linked to the article. The row stores a stable article-local
+reference, Storage path, required alt text and pixel dimensions, and optional
+caption and credit. The article may identify one of those rows as its lead
+image. The storage decision and future authoring contract are recorded in
+[ADR 0007](../architecture/decisions/0007-store-published-article-images-in-supabase-storage.md).
+
 Draft articles have never been published and have no publication date.
 Published and archived articles retain a publication date; only published rows
 whose date has arrived are public. Archiving therefore removes public access
@@ -85,6 +92,21 @@ reader-facing application code, Vercel, CI, or the ordinary `.env.local` build
 file.
 The administrative role receives only `select`, `insert`, and `update` table
 privileges; it does not receive `delete`.
+
+## Article image storage
+
+Published article images use the public `article-images` Storage bucket. Public
+access applies to downloads only. Anonymous clients have no upload, update, or
+delete grant or policy; future image-publishing behavior will perform writes
+with the same environment-specific secret key used for article mutations.
+
+The bucket accepts JPEG, PNG, and WebP objects up to 5 MiB. Object paths contain
+the article slug and a content digest, while `article_images` rows hold
+editorial metadata. Each reference is unique within its article and is intended
+to remain stable when the underlying file changes. Anonymous clients may read
+metadata only for images belonging to currently published articles. Preview and
+Production projects each own a separate bucket so an upload cannot cross
+environment boundaries.
 
 ## Application access
 
